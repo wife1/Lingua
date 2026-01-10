@@ -1,0 +1,7 @@
+{
+  "name": "Lingua",
+  "description": "A gamified language learning application inspired by Ling, featuring interactive lessons, progress tracking, and an AI-powered conversation partner.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
