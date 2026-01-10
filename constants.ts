@@ -2,6 +2,7 @@
 import { Language, Lesson, DailyGoal } from './types';
 
 export const LANGUAGES: Language[] = [
+  { id: 'en-us', name: 'English (US)', nativeName: 'English', flag: '🇺🇸' },
   { id: 'th', name: 'Thai', nativeName: 'ภาษาไทย', flag: '🇹🇭' },
   { id: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
   { id: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
@@ -26,7 +27,7 @@ export const LANGUAGES: Language[] = [
   { id: 'fa', name: 'Persian', nativeName: 'فارسی', flag: '🇮🇷' },
   { id: 'nn', name: 'Nynorsk', nativeName: 'Nynorsk', flag: '🇳🇴' },
   { id: 'no', name: 'Norwegian', nativeName: 'Norsk', flag: '🇳🇴' },
-  { id: 'mr', name: 'Marathi', nativeName: 'मਰਾठी', flag: '🇮🇳' },
+  { id: 'mr', name: 'Marathi', nativeName: 'मराठी', flag: '🇮🇳' },
   { id: 'mk', name: 'Macedonian', nativeName: 'Македонски', flag: '🇲🇰' },
   { id: 'lt', name: 'Lithuanian', nativeName: 'Lietuvių', flag: '🇱🇹' },
   { id: 'lv', name: 'Latvian', nativeName: 'Latviešu', flag: '🇱🇻' },
@@ -42,7 +43,6 @@ export const LANGUAGES: Language[] = [
   { id: 'ge', name: 'Georgian', nativeName: 'ქართული', flag: '🇬🇪' },
   { id: 'ee', name: 'Estonian', nativeName: 'Eesti', flag: '🇪🇪' },
   { id: 'eo', name: 'Esperanto', nativeName: 'Esperanto', flag: '🌍' },
-  { id: 'en-us', name: 'English (US)', nativeName: 'English', flag: '🇺🇸' },
   { id: 'ady', name: 'Adyghe', nativeName: 'Адыгабзэ', flag: '🇷🇺' },
   { id: 'af', name: 'Afrikaans', nativeName: 'Afrikaans', flag: '🇿🇦' },
   { id: 'am', name: 'Amharic', nativeName: 'አማርኛ', flag: '🇪🇹' },
@@ -52,7 +52,7 @@ export const LANGUAGES: Language[] = [
   { id: 'bn', name: 'Bengali', nativeName: 'বাংলা', flag: '🇧🇩' },
   { id: 'bs', name: 'Bosnian', nativeName: 'Bosanski', flag: '🇧🇦' },
   { id: 'bg', name: 'Bulgarian', nativeName: 'Български', flag: '🇧🇬' },
-  { id: 'ca', name: 'Catalan', nativeName: 'Català', flag: '🇪🇸' },
+  { id: 'ca', name: 'Catalan', nativeName: 'Català', flag: '🇦🇩' },
   { id: 'zh', name: 'Chinese (Simplified)', nativeName: '简体中文', flag: '🇨🇳' },
   { id: 'hr', name: 'Croatian', nativeName: 'Hrvatski', flag: '🇭🇷' },
   { id: 'cs', name: 'Czech', nativeName: 'Čeština', flag: '🇨🇿' },
@@ -60,71 +60,116 @@ export const LANGUAGES: Language[] = [
   { id: 'nl', name: 'Dutch', nativeName: 'Nederlands', flag: '🇳🇱' },
 ];
 
-const GENERATE_EXTRA_LESSONS = (): Lesson[] => {
-  const base: Lesson[] = [
-    { id: 'l1', title: 'Greetings & Basics', category: 'Essential', difficulty: 'Beginner', progress: 100, icon: '👋', color: 'bg-yellow-400', grammarNotes: 'Thai uses polite particles "khrap" and "kha".', vocabulary: ['Sawasdee', 'Khob khun', 'Khor thod'] },
-    { id: 'l2', title: 'Food & Drinks', category: 'Daily Life', difficulty: 'Beginner', progress: 30, icon: '🍜', color: 'bg-green-400', grammarNotes: 'Classifiers are used for nouns.', vocabulary: ['Gin', 'Nam', 'Aroi'] },
-    { id: 'l3', title: 'Numbers 1-100', category: 'Basics', difficulty: 'Beginner', progress: 10, icon: '🔢', color: 'bg-blue-400', grammarNotes: 'Base 10 counting system.', vocabulary: ['Nueng', 'Sip', 'Roi'] },
-    { id: 'l4', title: 'Asking for Directions', category: 'Travel', difficulty: 'Intermediate', progress: 0, icon: '🗺️', color: 'bg-purple-400', grammarNotes: 'Question particles go at the end.', vocabulary: ['Leo sai', 'Trong pai', 'Tee nai'] },
-    { id: 'l5', title: 'At the Doctor', category: 'Emergency', difficulty: 'Intermediate', progress: 0, icon: '🏥', color: 'bg-red-400', grammarNotes: 'Expressing pain with "puat".', vocabulary: ['Puat', 'Yaa', 'Sabai'] },
-    { id: 'l6', title: 'Business Culture', category: 'Formal', difficulty: 'Advanced', progress: 0, icon: '💼', color: 'bg-indigo-400', grammarNotes: 'Honorifics in professional settings.', vocabulary: ['Prachum', 'Borisat', 'Sanya'] },
+export const INITIAL_LESSON_DATA = (): Lesson[] => {
+  const topics = [
+    { title: 'Greetings & Basics', icon: '👋', cat: 'Essential', color: 'bg-yellow-400', grammar: 'Polite particles vary by gender and context.' },
+    { title: 'Street Food Tour', icon: '🍲', cat: 'Food', color: 'bg-orange-400', grammar: 'Using classifiers for ordering different types of dishes.' },
+    { title: 'Finding Your Way', icon: '🗺️', cat: 'Travel', color: 'bg-blue-400', grammar: 'Prepositions of place and movement indicators.' },
+    { title: 'Emergency Help', icon: '🆘', cat: 'Essential', color: 'bg-red-500', grammar: 'Direct imperative verb forms for urgent situations.' },
+    { title: 'At the Market', icon: '🛍️', cat: 'Shopping', color: 'bg-emerald-400', grammar: 'Numerical systems and currency classifiers.' },
+    { title: 'Social Media', icon: '📱', cat: 'Digital', color: 'bg-purple-400', grammar: 'Informal slang and abbreviation rules.' },
+    { title: 'Nature & Parks', icon: '🌳', cat: 'Environment', color: 'bg-green-500', grammar: 'Adjective placement for describing scenery.' },
+    { title: 'Space Exploration', icon: '🚀', cat: 'Science', color: 'bg-indigo-500', grammar: 'Technical loanwords and future tense usage.' },
+    { title: 'Ancient Legends', icon: '🐉', cat: 'Culture', color: 'bg-amber-500', grammar: 'Narrative past tense and mythological honorifics.' },
+    { title: 'Tech Startup', icon: '💻', cat: 'Business', color: 'bg-cyan-500', grammar: 'Professional honorifics in office environments.' },
+    { title: 'Daily Routine', icon: '⏰', cat: 'Daily Life', color: 'bg-rose-400', grammar: 'Time markers and frequency adverbs.' },
+    { title: 'Pet Care', icon: '🐕', cat: 'Home', color: 'bg-teal-400', grammar: 'Possessive particles for relationships.' },
+    { title: 'Music & Art', icon: '🎨', cat: 'Hobbies', color: 'bg-fuchsia-400', grammar: 'Verbs of emotion and sensory descriptions.' },
+    { title: 'In the Kitchen', icon: '🔪', cat: 'Home', color: 'bg-lime-500', grammar: 'Recipe-specific imperatives and sequence markers.' },
+    { title: 'Sports & Fitness', icon: '🏃', cat: 'Health', color: 'bg-violet-500', grammar: 'Comparison structures (faster, stronger).' },
+    { title: 'Weather Forecast', icon: '🌤️', cat: 'Daily Life', color: 'bg-sky-400', grammar: 'Impersonal weather verbs and condition markers.' },
+    { title: 'Romantic Dinner', icon: '🕯️', cat: 'Social', color: 'bg-pink-500', grammar: 'Softening particles for polite invitations.' },
+    { title: 'Public Transport', icon: '🚌', cat: 'Travel', color: 'bg-zinc-500', grammar: 'Locative prepositions for commute.' },
+    { title: 'Coding Basics', icon: '⌨️', cat: 'Digital', color: 'bg-slate-600', grammar: 'Conditional logic structures (if/then).' },
+    { title: 'Mindfulness', icon: '🧘', cat: 'Health', color: 'bg-emerald-300', grammar: 'Stative verbs and continuous present.' },
+    { title: 'Global News', icon: '📰', cat: 'Culture', color: 'bg-blue-400', grammar: 'Formal reporting speech and quoted speech rules.' },
+    { title: 'Aviation History', icon: '✈️', cat: 'History', color: 'bg-neutral-500', grammar: 'Historical past tense markers.' },
+    { title: 'Gardening Tips', icon: '🌻', cat: 'Hobbies', color: 'bg-yellow-300', grammar: 'Spatial descriptors for plant placement.' },
+    { title: 'Fashion Design', icon: '👗', cat: 'Art', color: 'bg-pink-300', grammar: 'Adjective ordering for materials and colors.' },
+    { title: 'Coffee Culture', icon: '☕', cat: 'Social', color: 'bg-stone-600', grammar: 'Intensifiers for adjectives (very, slightly).' },
+    { title: 'Ocean Mysteries', icon: '🐋', cat: 'Environment', color: 'bg-blue-700', grammar: 'Superlatives for describing extremes.' },
+    { title: 'Movie Night', icon: '🎬', cat: 'Entertainment', color: 'bg-red-600', grammar: 'Expressing subjective opinions and reactions.' },
+    { title: 'Board Games', icon: '🎲', cat: 'Social', color: 'bg-yellow-600', grammar: 'Modality of rules (can, must, shouldn\'t).' },
+    { title: 'Architecture', icon: '🏛️', cat: 'Art', color: 'bg-stone-400', grammar: 'Material nouns and structural descriptors.' },
+    { title: 'Cryptocurrency', icon: '₿', cat: 'Business', color: 'bg-orange-500', grammar: 'Dynamic financial vocabulary.' },
+    { title: 'Camping Trip', icon: '🏕️', cat: 'Travel', color: 'bg-green-700', grammar: 'Survival vocabulary and item nouns.' },
+    { title: 'Astronomy', icon: '🔭', cat: 'Science', color: 'bg-slate-900', grammar: 'Compound nouns for celestial bodies.' },
+    { title: 'Volunteering', icon: '🤝', cat: 'Social', color: 'bg-rose-300', grammar: 'Benefactive particles (doing something for others).' },
+    { title: 'Legal Matters', icon: '⚖️', cat: 'Business', color: 'bg-gray-800', grammar: 'Formal negative particles and strict syntax.' },
+    { title: 'Baking Bread', icon: '🍞', cat: 'Hobbies', color: 'bg-amber-300', grammar: 'Process-oriented transition words.' },
+    { title: 'Robotics', icon: '🤖', cat: 'Technology', color: 'bg-zinc-300', grammar: 'Action-result relationship markers.' },
+    { title: 'Photography', icon: '📷', cat: 'Art', color: 'bg-gray-700', grammar: 'Descriptors for light, focus, and perspective.' },
+    { title: 'Public Speaking', icon: '🎤', cat: 'Skills', color: 'bg-indigo-600', grammar: 'Emphasis particles for spoken discourse.' },
+    { title: 'Mountain Climbing', icon: '🧗', cat: 'Sports', color: 'bg-slate-500', grammar: 'Physical exertion state verbs.' },
+    { title: 'Zoo Visit', icon: '🦁', cat: 'Education', color: 'bg-orange-300', grammar: 'Pluralization rules for animal species.' },
+    { title: 'Airport Check-in', icon: '🎫', cat: 'Travel', color: 'bg-sky-600', grammar: 'Standard declarative phrases for services.' },
+    { title: 'Sustainable Living', icon: '♻️', cat: 'Environment', color: 'bg-emerald-600', grammar: 'Modal verbs of obligation and ethics.' },
+    { title: 'Library Study', icon: '📚', cat: 'Education', color: 'bg-amber-800', grammar: 'Academic compound nouns.' },
+    { title: 'Theme Park', icon: '🎡', cat: 'Entertainment', color: 'bg-pink-600', grammar: 'Exclamatory sentence structures.' },
+    { title: 'Winter Sports', icon: '⛷️', cat: 'Sports', color: 'bg-blue-100', grammar: 'Sensory descriptors for cold and motion.' },
+    { title: 'Urban Legend', icon: '👻', cat: 'Culture', color: 'bg-purple-800', grammar: 'Mood-setting syntax and particle choice.' },
+    { title: 'DIY Projects', icon: '🔨', cat: 'Home', color: 'bg-orange-900', grammar: 'Step-by-step logical connectors.' },
+    { title: 'Luxury Travel', icon: '💎', cat: 'Travel', color: 'bg-indigo-300', grammar: 'Extremely polite register for high-end service.' },
+    { title: 'Ancient Egypt', icon: '🏺', cat: 'History', color: 'bg-yellow-800', grammar: 'Past tense markers for ancient history.' },
+    { title: 'Modern Dance', icon: '💃', cat: 'Art', color: 'bg-rose-500', grammar: 'Fluid motion action verbs.' },
+    { title: 'Car Repair', icon: '🔧', cat: 'Skills', color: 'bg-gray-400', grammar: 'Part-whole relationship markers.' },
+    { title: 'Virtual Reality', icon: '🥽', cat: 'Technology', color: 'bg-cyan-600', grammar: 'Spatial prepositions in digital space.' },
+    { title: 'Chess Strategy', icon: '♟️', cat: 'Hobbies', color: 'bg-stone-800', grammar: 'Complex conditional logic (if/then/else).' },
+    { title: 'Yoga Flow', icon: '🧘‍♀️', cat: 'Health', color: 'bg-purple-300', grammar: 'Anatomical imperative alignment.' },
+    { title: 'Scuba Diving', icon: '🤿', cat: 'Travel', color: 'bg-blue-900', grammar: 'Pressure and depth related measurements.' },
+    { title: 'Pottery Class', icon: '🏺', cat: 'Hobbies', color: 'bg-amber-700', grammar: 'Material state change verbs (soft, hard).' },
+    { title: 'High-speed Rail', icon: '🚅', cat: 'Travel', color: 'bg-zinc-200', grammar: 'Time and distance ratio structures.' },
+    { title: 'Renewable Energy', icon: '☀️', cat: 'Environment', color: 'bg-yellow-200', grammar: 'Technical passive voice for systems.' },
+    { title: 'Virtual Concerts', icon: '🎧', cat: 'Entertainment', color: 'bg-fuchsia-600', grammar: 'Digital experience descriptors.' },
+    { title: 'E-commerce', icon: '🛒', cat: 'Business', color: 'bg-blue-500', grammar: 'Transactional verbs and feedback syntax.' }
   ];
 
-  const categories = ['Travel', 'Food', 'Social', 'Nature', 'Business', 'Technology', 'Hobbies', 'Shopping', 'Emotions', 'Education'];
-  const difficulties: ('Beginner' | 'Intermediate' | 'Advanced')[] = ['Beginner', 'Intermediate', 'Advanced'];
-  const colors = ['bg-pink-400', 'bg-orange-400', 'bg-cyan-400', 'bg-lime-400', 'bg-teal-400', 'bg-rose-400', 'bg-amber-400', 'bg-emerald-400'];
-  const icons = ['🌴', '✈️', '🥗', '🏢', '📱', '🎭', '🎨', '🐶', '🍕', '🧗', '🌋', '⛺', '🏠', '🛍️', '🎓', '❤️', '⚖️', '🔋', '🚀', '🎸'];
-
-  const extra: Lesson[] = [];
-  for (let i = 7; i <= 56; i++) {
-    const cat = categories[i % categories.length];
-    const diff = difficulties[i % difficulties.length];
-    const icon = icons[i % icons.length];
-    const color = colors[i % colors.length];
-    extra.push({
-      id: `l${i}`,
-      title: `${cat} Module ${Math.floor(i / categories.length) + 1}`,
-      category: cat,
-      difficulty: diff,
-      progress: 0,
-      icon: icon,
-      color: color,
-      grammarNotes: `Expanded grammar rules for ${cat} in ${diff} context.`,
-      vocabulary: [`WordA${i}`, `WordB${i}`, `WordC${i}`],
-      needsReview: i % 10 === 0 // Mark some for SRS
-    });
-  }
-
-  return [...base, ...extra];
+  return topics.map((t, i) => ({
+    id: `l${i}`,
+    title: t.title,
+    category: t.cat,
+    difficulty: i < 15 ? 'Beginner' : i < 35 ? 'Intermediate' : 'Advanced',
+    progress: i === 0 ? 100 : 0, 
+    icon: t.icon,
+    color: t.color,
+    grammarNotes: t.grammar,
+    vocabulary: [
+      `${t.title} Vocab A`, 
+      `${t.title} Vocab B`, 
+      `${t.title} Vocab C`, 
+      `${t.title} Phrase`
+    ],
+    needsReview: i % 12 === 0
+  }));
 };
 
-export const MOCK_LESSONS: Lesson[] = GENERATE_EXTRA_LESSONS();
+export const MOCK_LESSONS: Lesson[] = INITIAL_LESSON_DATA();
 
 export const MOCK_QUIZ_GREETINGS = [
   {
     id: 'q1',
     type: 'MATCH',
-    prompt: 'Match the English words to their Thai translations',
+    prompt: 'Match the phrases to their meanings:',
     pairs: [
-      { key: 'Hello', value: 'Sawasdee' },
-      { key: 'Thank you', value: 'Khob khun' },
-      { key: 'Sorry', value: 'Khor thod' },
-      { key: 'Goodbye', value: 'La gon' }
+      { key: 'Hello', value: 'Greeting' },
+      { key: 'Bread', value: 'Food' },
+      { key: 'Car', value: 'Vehicle' },
+      { key: 'Blue', value: 'Color' }
     ]
   },
   {
     id: 'q2',
     type: 'MULTIPLE_CHOICE',
-    prompt: 'How do you say "Thank you" in Thai?',
-    options: ['Sawasdee', 'Khob khun', 'Khor thod', 'Chai'],
-    correctAnswer: 'Khob khun'
+    prompt: 'Which one is a polite greeting?',
+    options: ['Hi', 'Get out', 'I am hungry', 'Goodbye'],
+    correctAnswer: 'Hi'
   },
   {
     id: 'q3',
     type: 'ARRANGE',
-    prompt: 'Arrange the sentence: "Hello, how are you?"',
-    options: ['Sawasdee', 'khun', 'sabai dee mai', '?'],
-    correctAnswer: ['Sawasdee', 'khun', 'sabai dee mai', '?']
+    prompt: 'Order the words to form a valid sentence:',
+    options: ['I', 'am', 'learning', 'fast'],
+    correctAnswer: ['I', 'am', 'learning', 'fast']
   }
 ];
 

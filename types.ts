@@ -4,7 +4,8 @@ export enum AppView {
   LESSON = 'LESSON',
   CHAT = 'CHAT',
   PROFILE = 'PROFILE',
-  REVIEW = 'REVIEW'
+  REVIEW = 'REVIEW',
+  VOCAB_PRACTICE = 'VOCAB_PRACTICE'
 }
 
 export type Language = {

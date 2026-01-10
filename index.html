@@ -11,6 +11,8 @@
       body {
         font-family: 'Inter', sans-serif;
         background-color: #fdfcf6;
+        color: #1e293b;
+        font-size: 14px; /* Slightly reduced for a more compact UI */
       }
       .font-outfit {
         font-family: 'Outfit', sans-serif;
@@ -55,16 +57,16 @@
       }
 
       @keyframes scale-in-center {
-        0% { transform: scale(0); opacity: 0; }
+        0% { transform: scale(0.9); opacity: 0; }
         100% { transform: scale(1); opacity: 1; }
       }
       .scale-in-center {
-        animation: scale-in-center 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+        animation: scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
       }
 
       @keyframes pulse-slow {
         0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+        50% { transform: scale(1.05); }
       }
       .animate-pulse-slow {
         animation: pulse-slow 3s ease-in-out infinite;
@@ -72,10 +74,24 @@
 
       @keyframes bounce-short {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+        50% { transform: translateY(-5px); }
       }
       .animate-bounce-short {
         animation: bounce-short 1.5s ease-in-out infinite;
+      }
+
+      /* Vocab Practice 3D Utilities */
+      .perspective-1000 {
+        perspective: 1000px;
+      }
+      .preserve-3d {
+        transform-style: preserve-3d;
+      }
+      .backface-hidden {
+        backface-visibility: hidden;
+      }
+      .rotate-y-180 {
+        transform: rotateY(180deg);
       }
     </style>
   <script type="importmap">
