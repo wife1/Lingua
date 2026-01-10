@@ -13,6 +13,7 @@ interface LessonCardProps {
 
 const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar, onPracticeVocab, onRate, languageName }) => {
   const [showSummary, setShowSummary] = useState(false);
+  const [showGrammarDetail, setShowGrammarDetail] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   const difficultyColors = {
@@ -202,24 +203,38 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar,
               </div>
 
               {lesson.grammarNotes && (
-                <div className={`p-4 rounded-2xl border-2 ${lesson.needsReview ? 'bg-red-50 border-red-100 shadow-red-100/50 shadow-sm' : 'bg-white border-blue-50 shadow-sm'}`}>
-                   <div className="flex items-center gap-2 mb-2">
-                     <span className="text-lg">📖</span>
-                     <p className={`text-[10px] font-black ${lesson.needsReview ? 'text-red-500' : 'text-blue-500'} uppercase tracking-widest`}>Grammar Explanation</p>
-                   </div>
-                   <p className={`text-xs ${lesson.needsReview ? 'text-red-900' : 'text-gray-700'} leading-relaxed font-medium italic mb-3`}>
-                     {lesson.grammarNotes}
-                   </p>
+                <div className={`rounded-2xl border-2 transition-all duration-300 overflow-hidden ${lesson.needsReview ? 'border-red-100 bg-red-50/50' : 'border-blue-50 bg-white'}`}>
                    <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      onShowGrammar(e);
+                      setShowGrammarDetail(!showGrammarDetail);
                     }}
-                    className="flex items-center gap-1.5 text-[10px] font-black text-blue-600 hover:text-blue-800 uppercase tracking-widest transition-all group/learn"
+                    className="w-full flex items-center justify-between p-4 hover:bg-blue-50/20 transition-colors"
                    >
-                     Learn More 
-                     <span className="group-hover/learn:translate-x-1 transition-transform">→</span>
+                     <div className="flex items-center gap-2">
+                       <span className="text-lg">📖</span>
+                       <p className={`text-[10px] font-black ${lesson.needsReview ? 'text-red-500' : 'text-blue-500'} uppercase tracking-widest`}>Grammar Notes</p>
+                     </div>
+                     <span className={`text-xs transition-transform duration-300 ${showGrammarDetail ? 'rotate-180' : ''}`}>▼</span>
                    </button>
+                   
+                   {showGrammarDetail && (
+                     <div className="px-4 pb-4 animate-in slide-in-from-top-2 duration-300">
+                        <p className={`text-xs ${lesson.needsReview ? 'text-red-900' : 'text-gray-700'} leading-relaxed font-medium italic mb-4`}>
+                          {lesson.grammarNotes}
+                        </p>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onShowGrammar(e);
+                          }}
+                          className="flex items-center gap-1.5 text-[10px] font-black text-blue-600 hover:text-blue-800 uppercase tracking-widest transition-all group/learn"
+                        >
+                          View Full Breakdown 
+                          <span className="group-hover/learn:translate-x-1 transition-transform">→</span>
+                        </button>
+                     </div>
+                   )}
                 </div>
               )}
             </div>

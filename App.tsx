@@ -93,7 +93,7 @@ const App: React.FC = () => {
   };
 
   const handleViewChange = (view: AppView) => {
-    // CRITICAL: Clear all overlays and active session states when navigating via sidebar
+    // CRITICAL: Clear all potential blocking states when navigating via sidebar
     setActiveLesson(null);
     setActiveVocabLesson(null);
     setShowLessonDetail(null);
@@ -101,8 +101,8 @@ const App: React.FC = () => {
     setConfirmStart(null);
     
     setView(view);
-    // Auto-scroll to top on view change
-    mainRef.current?.scrollTo({ top: 0 });
+    // Smooth auto-scroll to top
+    mainRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLessonComplete = (score: number, total: number) => {
@@ -169,7 +169,7 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
-    // These states take priority over the view switcher
+    // Priority full-screen modes
     if (activeLesson) {
       return (
         <div className="h-full max-w-2xl mx-auto py-4">
@@ -197,6 +197,7 @@ const App: React.FC = () => {
       );
     }
 
+    // View router
     switch (currentView) {
       case AppView.DASHBOARD:
         return (
@@ -336,7 +337,6 @@ const App: React.FC = () => {
           {renderContent()}
         </div>
 
-        {/* Scroll To Top Button */}
         <button
           onClick={scrollToTop}
           className={`fixed bottom-24 right-8 z-[60] w-12 h-12 bg-gray-900 text-yellow-400 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:bg-black hover:scale-110 active:scale-90 border-2 border-gray-800 ${
@@ -349,7 +349,6 @@ const App: React.FC = () => {
           </svg>
         </button>
 
-        {/* Start Confirmation Modal */}
         {confirmStart && (
           <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-md animate-in fade-in duration-300 px-6">
             <div className="bg-white rounded-3xl p-10 max-sm w-full text-center shadow-2xl scale-in-center border-t-[10px] border-yellow-400 relative">
@@ -376,7 +375,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Language Selector Component */}
         {showLanguageBoard && (
            <LanguageSelector 
              selectedLanguage={selectedLanguage}
@@ -387,7 +385,6 @@ const App: React.FC = () => {
            />
         )}
 
-        {/* Lesson Detail Modal */}
         {showLessonDetail && (
            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md animate-in fade-in duration-300 px-6">
               <div className="bg-white rounded-3xl p-10 max-w-xl w-full shadow-2xl scale-in-center overflow-y-auto max-h-[85vh] custom-scrollbar border-t-[12px] border-yellow-400 relative">
