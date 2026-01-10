@@ -2,9 +2,9 @@
 import { GoogleGenAI } from "@google/genai";
 import { ChatMessage } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
+// Always use new GoogleGenAI({apiKey: process.env.API_KEY}) inside functions to ensure latest API key
 export const startAIChat = async (targetLanguage: string) => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   return ai.chats.create({
     model: 'gemini-3-flash-preview',
     config: {
@@ -18,6 +18,7 @@ export const startAIChat = async (targetLanguage: string) => {
 };
 
 export const generateLessonFeedback = async (score: number, total: number, language: string) => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const prompt = `The user just finished a ${language} lesson. They scored ${score} out of ${total}. 
   Write a short, encouraging motivational message in ${language} (with English translation).`;
   
@@ -26,5 +27,6 @@ export const generateLessonFeedback = async (score: number, total: number, langu
     contents: prompt
   });
   
+  // Directly access the .text property
   return response.text;
 };

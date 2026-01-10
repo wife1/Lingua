@@ -1,13 +1,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { AppView, Language, Lesson, Badge, DailyGoal, GrammarItem } from './types';
-import { LANGUAGES, INITIAL_LESSON_DATA, MOCK_QUIZ_GREETINGS, MOCK_GOALS, getGrammarDataForLang } from './constants';
+import { LANGUAGES, INITIAL_LESSON_DATA, MOCK_QUIZ_GREETINGS, MOCK_GOALS, getGrammarDataForLang, getLessonsForLang } from './constants';
 import Sidebar from './components/Sidebar';
 import LessonCard from './components/LessonCard';
 import ChatInterface from './components/ChatInterface';
 import Quiz from './components/Quiz';
 import VocabPractice from './components/VocabPractice';
 import GrammarBank from './components/GrammarBank';
+import LearnDashboard from './components/LearnDashboard';
+import LanguageSelector from './components/LanguageSelector';
 
 const INITIAL_BADGES: Badge[] = [
   { id: 'b1', name: 'First Word', description: 'Complete your first lesson', icon: '🌱', unlocked: false, requirement: 'lessons:1' },
@@ -24,55 +26,36 @@ const App: React.FC = () => {
   const [activeVocabLesson, setActiveVocabLesson] = useState<Lesson | null>(null);
   const [showLessonDetail, setShowLessonDetail] = useState<Lesson | null>(null);
   const [showLanguageBoard, setShowLanguageBoard] = useState(false);
-  const [langSearch, setLangSearch] = useState('');
   
   const [streak, setStreak] = useState(12);
   const [coins, setCoins] = useState(2450);
   const [xp, setXp] = useState(12450);
-  const [completedLessonsCount, setCompletedLessonsCount] = useState(4);
+  const [completedLessonsCount, setCompletedLessonsCount] = useState(1);
   const [badges, setBadges] = useState<Badge[]>(INITIAL_BADGES);
   const [studiedLanguages, setStudiedLanguages] = useState<Set<string>>(new Set([LANGUAGES[0].id]));
   const [lastReward, setLastReward] = useState<{ coins: number, xp: number } | null>(null);
   const [confirmStart, setConfirmStart] = useState<Lesson | null>(null);
 
+  // Global Lists State
+  const [allLanguages, setAllLanguages] = useState<Language[]>(LANGUAGES);
+  
+  // Curriculum State
   const [allLanguageLessons, setAllLanguageLessons] = useState<Record<string, Lesson[]>>({
-    [LANGUAGES[0].id]: INITIAL_LESSON_DATA()
+    [LANGUAGES[0].id]: getLessonsForLang(LANGUAGES[0].id)
   });
 
-  // State to hold grammar items, initialized from constants but allows updates via Import
+  // Grammar State
   const [customGrammarData, setCustomGrammarData] = useState<Record<string, GrammarItem[]>>({});
 
   const lessons = useMemo(() => {
-    return allLanguageLessons[selectedLanguage.id] || INITIAL_LESSON_DATA();
+    return allLanguageLessons[selectedLanguage.id] || getLessonsForLang(selectedLanguage.id);
   }, [allLanguageLessons, selectedLanguage.id]);
 
   const grammarBankItems = useMemo(() => {
     return customGrammarData[selectedLanguage.id] || getGrammarDataForLang(selectedLanguage.id);
   }, [selectedLanguage.id, customGrammarData]);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [difficultyFilter, setDifficultyFilter] = useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [dailyGoals, setDailyGoals] = useState<DailyGoal[]>(MOCK_GOALS);
-
-  const categories = useMemo(() => Array.from(new Set(lessons.map(l => l.category))), [lessons]);
-
-  const filteredLessons = useMemo(() => {
-    return lessons.filter(l => {
-      const matchesSearch = l.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                            l.category.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesDifficulty = difficultyFilter ? l.difficulty === difficultyFilter : true;
-      const matchesCategory = categoryFilter ? l.category === categoryFilter : true;
-      return matchesSearch && matchesDifficulty && matchesCategory;
-    });
-  }, [searchTerm, difficultyFilter, categoryFilter, lessons]);
-
-  const filteredLanguages = useMemo(() => {
-    return LANGUAGES.filter(l => 
-      l.name.toLowerCase().includes(langSearch.toLowerCase()) || 
-      l.nativeName.toLowerCase().includes(langSearch.toLowerCase())
-    );
-  }, [langSearch]);
 
   useEffect(() => {
     let changed = false;
@@ -126,17 +109,18 @@ const App: React.FC = () => {
   };
 
   const handleUpdateGrammarItems = (newItems: GrammarItem[]) => {
-    setCustomGrammarData(prev => ({
-      ...prev,
-      [selectedLanguage.id]: newItems
-    }));
+    setCustomGrammarData(prev => ({ ...prev, [selectedLanguage.id]: newItems }));
+  };
+
+  const handleUpdateLessons = (newLessons: Lesson[]) => {
+    setAllLanguageLessons(prev => ({ ...prev, [selectedLanguage.id]: newLessons }));
   };
 
   const handleLanguageChange = (lang: Language) => {
     setSelectedLanguage(lang);
     setStudiedLanguages(prev => new Set([...prev, lang.id]));
     if (!allLanguageLessons[lang.id]) {
-      setAllLanguageLessons(prev => ({ ...prev, [lang.id]: INITIAL_LESSON_DATA() }));
+      setAllLanguageLessons(prev => ({ ...prev, [lang.id]: getLessonsForLang(lang.id) }));
     }
     setShowLanguageBoard(false);
   };
@@ -219,83 +203,19 @@ const App: React.FC = () => {
               ))}
             </section>
 
-            {/* Courses Section */}
-            <section>
-              <div className="flex flex-col space-y-4 mb-8">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <h3 className="text-2xl font-black text-gray-800 font-outfit tracking-tight">Modules</h3>
-                  <div className="relative group">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300">🔍</span>
-                    <input 
-                      type="text" 
-                      placeholder="Find a topic..."
-                      className="pl-9 pr-4 py-2.5 bg-white border border-gray-100 rounded-full text-sm font-medium outline-none focus:ring-4 focus:ring-yellow-400/10 transition-all w-full sm:w-72 shadow-sm"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center bg-white border border-gray-100 p-1 rounded-full shadow-sm">
-                    {['All', 'Beginner', 'Intermediate', 'Advanced'].map(d => (
-                      <button 
-                        key={d}
-                        onClick={() => setDifficultyFilter(d === 'All' ? null : d)}
-                        className={`px-4 py-1.5 text-[10px] font-black rounded-full transition-all uppercase tracking-wider ${
-                          (d === 'All' && !difficultyFilter) || difficultyFilter === d 
-                          ? 'bg-gray-800 text-white shadow-md' 
-                          : 'text-gray-400 hover:text-gray-700'
-                        }`}
-                      >
-                        {d.substring(0, 3)}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 overflow-x-auto pb-1 no-scrollbar max-w-full">
-                    <button 
-                      onClick={() => setCategoryFilter(null)}
-                      className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border whitespace-nowrap ${
-                        !categoryFilter ? 'bg-yellow-400 text-yellow-900 border-yellow-400 shadow-sm' : 'bg-white text-gray-500 border-gray-100'
-                      }`}
-                    >
-                      All
-                    </button>
-                    {categories.slice(0, 12).map(cat => (
-                      <button 
-                        key={cat}
-                        onClick={() => setCategoryFilter(cat)}
-                        className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border whitespace-nowrap ${
-                          categoryFilter === cat ? 'bg-yellow-400 text-yellow-900 border-yellow-400 shadow-sm' : 'bg-white text-gray-500 border-gray-100 hover:border-gray-200'
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredLessons.map(lesson => (
-                  <LessonCard 
-                    key={lesson.id} 
-                    lesson={lesson} 
-                    onClick={() => setShowLessonDetail(lesson)} 
-                    onShowGrammar={() => {}}
-                    onPracticeVocab={() => setActiveVocabLesson(lesson)}
-                    onRate={handleRating}
-                  />
-                ))}
-              </div>
-            </section>
+            <LearnDashboard 
+              language={selectedLanguage}
+              lessons={lessons}
+              onUpdateLessons={handleUpdateLessons}
+              onSelectLesson={setShowLessonDetail}
+              onPracticeVocab={setActiveVocabLesson}
+              onRate={handleRating}
+            />
           </div>
         );
 
       case AppView.REVIEW:
         const reviewRequired = lessons.filter(l => l.needsReview);
-        
         return (
           <div className="max-w-5xl mx-auto space-y-12 animate-in fade-in slide-in-from-left-4 duration-500 pb-20">
             <h2 className="text-3xl font-black text-gray-800 font-outfit tracking-tight">Review Hub</h2>
@@ -423,52 +343,15 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Language Selector Modal */}
+        {/* New Language Selector Component */}
         {showLanguageBoard && (
-           <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-md animate-in fade-in duration-500">
-              <div className="bg-white rounded-3xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl scale-in-center mx-4 overflow-hidden border-[8px] border-yellow-400">
-                 <div className="p-8 border-b border-gray-100 bg-yellow-50/20">
-                    <div className="flex justify-between items-center mb-6">
-                       <h2 className="text-3xl font-black text-gray-800 font-outfit tracking-tight">Choose Your Mission</h2>
-                       <button onClick={() => setShowLanguageBoard(false)} className="bg-white w-10 h-10 rounded-xl shadow-lg text-gray-300 hover:text-red-500 text-xl flex items-center justify-center transition-all">✕</button>
-                    </div>
-                    <div className="relative group">
-                       <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl group-focus-within:scale-110 transition-transform">🌍</span>
-                       <input 
-                        type="text" 
-                        placeholder="Search languages..."
-                        className="w-full pl-14 pr-8 py-4 bg-white border border-gray-100 rounded-2xl outline-none focus:ring-4 focus:ring-yellow-400/10 shadow-sm transition-all text-lg font-bold placeholder:text-gray-200"
-                        value={langSearch}
-                        onChange={(e) => setLangSearch(e.target.value)}
-                       />
-                    </div>
-                 </div>
-                 <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-gray-50/10">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                       {filteredLanguages.map(lang => (
-                          <button
-                            key={lang.id}
-                            onClick={() => handleLanguageChange(lang)}
-                            className={`p-6 rounded-2xl flex items-center gap-5 border-2 transition-all group relative overflow-hidden ${
-                              selectedLanguage.id === lang.id ? 'border-yellow-400 bg-yellow-50 shadow-md' : 'border-white hover:border-yellow-200 hover:bg-white bg-white shadow-sm'
-                            }`}
-                          >
-                             <span className="text-4xl group-hover:scale-110 transition-transform duration-500 z-10">{lang.flag}</span>
-                             <div className="text-left flex-1 min-w-0 z-10">
-                                <p className="font-black text-gray-800 truncate leading-tight text-lg tracking-tight">{lang.name}</p>
-                                <p className="text-[10px] text-gray-400 font-black truncate tracking-widest uppercase mt-0.5">{lang.nativeName}</p>
-                             </div>
-                             {selectedLanguage.id === lang.id && (
-                               <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-white z-10">
-                                  <span className="font-black text-sm">✓</span>
-                               </div>
-                             )}
-                          </button>
-                       ))}
-                    </div>
-                 </div>
-              </div>
-           </div>
+           <LanguageSelector 
+             selectedLanguage={selectedLanguage}
+             languages={allLanguages}
+             onSelectLanguage={handleLanguageChange}
+             onUpdateLanguages={setAllLanguages}
+             onClose={() => setShowLanguageBoard(false)}
+           />
         )}
 
         {/* Lesson Detail Modal */}

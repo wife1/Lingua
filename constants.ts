@@ -17,7 +17,7 @@ export const LANGUAGES: Language[] = [
   { id: 'se', name: 'Swedish', nativeName: 'Svenska', flag: '🇸🇪' },
   { id: 'si', name: 'Slovenian', nativeName: 'Slovenščina', flag: '🇸🇮' },
   { id: 'sk', name: 'Slovak', nativeName: 'Slovenčina', flag: '🇸🇰' },
-  { id: 'rs', name: 'Serbian', nativeName: 'Српски', flag: '🇷🇸' },
+  { id: 'rs', name: 'Serbian', nativeName: 'Сርпски', flag: '🇷🇸' },
   { id: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
   { id: 'ro', name: 'Romanian', nativeName: 'Română', flag: '🇷🇴' },
   { id: 'pa', name: 'Punjabi', nativeName: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
@@ -27,7 +27,7 @@ export const LANGUAGES: Language[] = [
   { id: 'fa', name: 'Persian', nativeName: 'فارسی', flag: '🇮🇷' },
   { id: 'nn', name: 'Nynorsk', nativeName: 'Nynorsk', flag: '🇳🇴' },
   { id: 'no', name: 'Norwegian', nativeName: 'Norsk', flag: '🇳🇴' },
-  { id: 'mr', name: 'Marathi', nativeName: 'मराठी', flag: '🇮🇳' },
+  { id: 'mr', name: 'Marathi', nativeName: 'मራठी', flag: '🇮🇳' },
   { id: 'mk', name: 'Macedonian', nativeName: 'Македонски', flag: '🇲🇰' },
   { id: 'lt', name: 'Lithuanian', nativeName: 'Lietuvių', flag: '🇱🇹' },
   { id: 'lv', name: 'Latvian', nativeName: 'Latviešu', flag: '🇱🇻' },
@@ -47,7 +47,7 @@ export const LANGUAGES: Language[] = [
   { id: 'af', name: 'Afrikaans', nativeName: 'Afrikaans', flag: '🇿🇦' },
   { id: 'am', name: 'Amharic', nativeName: 'አማርኛ', flag: '🇪ት' },
   { id: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
-  { id: 'hy', name: 'Armenian', nativeName: 'Հայերեն', flag: '🇦🇲' },
+  { id: 'hy', name: 'Armenian', nativeName: 'Հայერեն', flag: '🇦🇲' },
   { id: 'be', name: 'Belarusian', nativeName: 'Беларуская', flag: '🇧🇾' },
   { id: 'bn', name: 'Bengali', nativeName: 'বাংলা', flag: '🇧🇩' },
   { id: 'bs', name: 'Bosnian', nativeName: 'Bosanski', flag: '🇧🇦' },
@@ -69,205 +69,105 @@ export const GRAMMAR_BANK_DATA: Record<string, GrammarItem[]> = {
     { id: 'g1', title: 'Ser vs Estar', icon: '🔄', explanation: 'Both mean "to be", but "Ser" is permanent and "Estar" is temporary.', examples: ['Soy alto.', 'Estoy feliz.'], color: 'bg-red-100', level: 'Beginner' },
     { id: 'g2', title: 'The Subjunctive', icon: '🧠', explanation: 'Used for desires, doubts, and the unknown.', examples: ['Espero que vengas.', 'Dudo que sea así.'], color: 'bg-purple-100', level: 'Advanced' }
   ],
-  'th': [
-    { id: 'g1', title: 'Polite Particles', icon: '🙏', explanation: 'Added to the end of sentences to show respect (Krap/Ka).', examples: ['Sawasdee krap.', 'Khob khun ka.'], color: 'bg-yellow-100', level: 'Beginner' },
-    { id: 'g2', title: 'Classifiers', icon: '🔢', explanation: 'Specific nouns used when counting items.', examples: ['Maew song dtua (Two cats).'], color: 'bg-green-100', level: 'Intermediate' }
-  ]
 };
 
-// Function to get grammar data with a generic fallback if the language isn't explicitly defined
+const DEFAULT_TOPICS = [
+  { title: 'Greetings & Basics', icon: '👋', cat: 'Essential', color: 'bg-yellow-400', grammar: 'Polite particles vary by gender and context.', vocab: ['Hello', 'Good Morning', 'Thank you', 'Please'] },
+  { title: 'Street Food Tour', icon: '🍲', cat: 'Food', color: 'bg-orange-400', grammar: 'Using classifiers for ordering different types of dishes.', vocab: ['Rice', 'Spicy', 'Yummy', 'Bill'] },
+  { title: 'Finding Your Way', icon: '🗺️', cat: 'Travel', color: 'bg-blue-400', grammar: 'Prepositions of place and movement indicators.', vocab: ['Left', 'Right', 'Straight', 'Map'] },
+  { title: 'At the Market', icon: '🛍️', cat: 'Shopping', color: 'bg-emerald-400', grammar: 'Numerical systems and currency classifiers.', vocab: ['Price', 'Expensive', 'Cheap', 'Money'] },
+  { title: 'Social Media', icon: '📱', cat: 'Digital', color: 'bg-purple-400', grammar: 'Informal slang and abbreviation rules.', vocab: ['Post', 'Like', 'Share', 'Friend'] },
+  { title: 'Space Exploration', icon: '🚀', cat: 'Science', color: 'bg-indigo-600', grammar: 'Future tense markers for hypothetical situations.', vocab: ['Planet', 'Galaxy', 'Astronaut', 'Rocket'] },
+  { title: 'Ancient Legends', icon: '🏺', cat: 'History', color: 'bg-amber-600', grammar: 'Narrative past tense for storytelling.', vocab: ['Myth', 'Empire', 'God', 'Ruins'] },
+  { title: 'Digital Nomad life', icon: '💻', cat: 'Digital', color: 'bg-cyan-500', grammar: 'Using "while" and "during" for simultaneous activities.', vocab: ['Remote', 'WiFi', 'Laptop', 'Coworking'] },
+  { title: 'Fashion Trends', icon: '👗', cat: 'Art', color: 'bg-pink-400', grammar: 'Comparative adjectives for styles.', vocab: ['Style', 'Elegant', 'Trendy', 'Vintage'] },
+  { title: 'Cooking Secrets', icon: '🍳', cat: 'Food', color: 'bg-red-400', grammar: 'Imperatives for recipe steps.', vocab: ['Sauté', 'Boil', 'Season', 'Flavor'] },
+  { title: 'Business Ethics', icon: '⚖️', cat: 'Professional', color: 'bg-slate-700', grammar: 'Formal modals for professional requests.', vocab: ['Trust', 'Profit', 'Integrity', 'Market'] },
+  { title: 'Marine Life', icon: '🐬', cat: 'Nature', color: 'bg-blue-600', grammar: 'Countable vs Uncountable nouns in biology.', vocab: ['Ocean', 'Coral', 'Shark', 'Deep'] },
+  { title: 'Modern Architecture', icon: '🏛️', cat: 'Art', color: 'bg-stone-500', grammar: 'Prepositions of direction and space.', vocab: ['Design', 'Structure', 'Modern', 'Symmetry'] },
+  { title: 'Music Festivals', icon: '🎼', cat: 'Entertainment', color: 'bg-fuchsia-500', grammar: 'Relative clauses for describing experiences.', vocab: ['Stage', 'Beat', 'Rhythm', 'Concert'] },
+  { title: 'Forest Wildlife', icon: '🦊', cat: 'Nature', color: 'bg-green-600', grammar: 'Adverbs of frequency for animal habits.', vocab: ['Animal', 'Habit', 'Shelter', 'Trail'] },
+  { title: 'Winter Sports', icon: '⛷️', cat: 'Sports', color: 'bg-sky-200', grammar: 'Conditional "if" for safety warnings.', vocab: ['Snow', 'Ski', 'Slope', 'Cold'] },
+  { title: 'Public Transport', icon: '🚌', cat: 'Travel', color: 'bg-zinc-500', grammar: 'Time expressions for schedules.', vocab: ['Bus', 'Ticket', 'Route', 'Delay'] },
+  { title: 'Night Sky', icon: '🌌', cat: 'Science', color: 'bg-neutral-900', grammar: 'Superlatives for astronomical bodies.', vocab: ['Star', 'Comet', 'Moon', 'Light'] },
+  { title: 'Board Games', icon: '🎲', cat: 'Hobbies', color: 'bg-rose-500', grammar: 'Quantifiers (some, many, few) in game rules.', vocab: ['Player', 'Strategy', 'Winner', 'Turn'] },
+  { title: 'Yoga & Health', icon: '🧘', cat: 'Wellness', color: 'bg-emerald-300', grammar: 'Stative verbs of perception.', vocab: ['Breath', 'Peace', 'Mind', 'Stretch'] },
+  { title: 'Robotics', icon: '🤖', cat: 'Science', color: 'bg-gray-400', grammar: 'Passive voice for automated processes.', vocab: ['AI', 'Sensor', 'Program', 'Logic'] },
+  { title: 'Photography', icon: '📷', cat: 'Art', color: 'bg-black', grammar: 'Using "too" and "enough" for lighting.', vocab: ['Focus', 'Lens', 'Frame', 'Capture'] },
+  { title: 'Daily Routine', icon: '⏰', cat: 'Essential', color: 'bg-violet-400', grammar: 'Simple present for recurring actions.', vocab: ['Wake up', 'Work', 'Study', 'Sleep'] },
+  { title: 'Pets & Care', icon: '🐕', cat: 'Home', color: 'bg-orange-300', grammar: 'Possessive adjectives for pet ownership.', vocab: ['Fur', 'Bail', 'Vet', 'Loyal'] },
+  { title: 'Gardening Tips', icon: '🌻', cat: 'Home', color: 'bg-yellow-500', grammar: 'Prepositions of place (in, on, under) for planting.', vocab: ['Soil', 'Water', 'Seed', 'Bloom'] },
+  { title: 'Movie Night', icon: '🎬', cat: 'Entertainment', color: 'bg-red-700', grammar: 'Participles as adjectives (boring vs bored).', vocab: ['Plot', 'Cast', 'Scene', 'Review'] },
+  { title: 'Chess Strategy', icon: '♟️', cat: 'Hobbies', color: 'bg-stone-800', grammar: 'Zero conditional for game mechanics.', vocab: ['Mate', 'Pawn', 'Knight', 'Move'] },
+  { title: 'Virtual Reality', icon: '🥽', cat: 'Digital', color: 'bg-cyan-600', grammar: 'Future continuous for immersive tech.', vocab: ['Avatar', 'Digital', 'Immersion', 'Space'] },
+  { title: 'Mountain Hiking', icon: '🧗', cat: 'Sports', color: 'bg-orange-800', grammar: 'Gerunds as subjects for physical activity.', vocab: ['Climb', 'Height', 'Gear', 'Summit'] },
+  { title: 'Baking Bread', icon: '🍞', cat: 'Food', color: 'bg-amber-300', grammar: 'Sequence adverbs (first, next, then).', vocab: ['Flour', 'Yeast', 'Knead', 'Rise'] },
+  { title: 'Weather Talk', icon: '🌦️', cat: 'Essential', color: 'bg-sky-400', grammar: 'Impersonal "it" for weather.', vocab: ['Rain', 'Sunny', 'Storm', 'Warm'] },
+  { title: 'Art Gallery', icon: '🖼️', cat: 'Art', color: 'bg-indigo-400', grammar: 'Adjectives of opinion vs fact.', vocab: ['Modern', 'Exhibit', 'Canvas', 'Artist'] },
+  { title: 'Gym Workout', icon: '💪', cat: 'Wellness', color: 'bg-blue-800', grammar: 'Modals of ability (can, could, be able to).', vocab: ['Lift', 'Strong', 'Health', 'Pulse'] },
+  { title: 'Desert Secrets', icon: '🏜️', cat: 'Nature', color: 'bg-yellow-700', grammar: 'Quantifiers (little, much) for resources.', vocab: ['Sand', 'Oasis', 'Heat', 'Dune'] },
+  { title: 'Camping Trip', icon: '🏕️', cat: 'Travel', color: 'bg-green-800', grammar: 'Using "be going to" for future plans.', vocab: ['Tent', 'Fire', 'Night', 'Wild'] },
+  { title: 'Volunteering', icon: '🤝', cat: 'Society', color: 'bg-rose-400', grammar: 'Relative pronouns for social causes.', vocab: ['Help', 'Support', 'Change', 'Goal'] },
+  { title: 'Coffee Culture', icon: '☕', cat: 'Food', color: 'bg-stone-600', grammar: 'Adverbs of manner for flavor descriptions.', vocab: ['Aroma', 'Roast', 'Bean', 'Brew'] },
+  { title: 'Airport Journey', icon: '✈️', cat: 'Travel', color: 'bg-blue-300', grammar: 'Present perfect for travel history.', vocab: ['Flight', 'Gate', 'Check-in', 'Luggage'] },
+  { title: 'Startup Pitch', icon: '💡', cat: 'Professional', color: 'bg-yellow-600', grammar: 'Persuasive rhetoric and emphatic "do".', vocab: ['Vision', 'Equity', 'Launch', 'Scale'] },
+  { title: 'Medieval Castles', icon: '🏰', cat: 'History', color: 'bg-gray-600', grammar: 'Past perfect for historical context.', vocab: ['Wall', 'Knight', 'Siege', 'King'] },
+  { title: 'Global News', icon: '📰', cat: 'Society', color: 'bg-blue-900', grammar: 'Reported speech for journalism.', vocab: ['Event', 'Update', 'Source', 'Report'] },
+  { title: 'Library Study', icon: '📚', cat: 'Professional', color: 'bg-amber-800', grammar: 'Modals of obligation (must, should).', vocab: ['Book', 'Silence', 'Thesis', 'Notes'] },
+  { title: 'Cycling Trails', icon: '🚲', cat: 'Sports', color: 'bg-lime-500', grammar: 'Directional prepositions (along, across).', vocab: ['Pedal', 'Tire', 'Path', 'Speed'] },
+  { title: 'Ocean Waves', icon: '🌊', cat: 'Nature', color: 'bg-blue-700', grammar: 'Causative verbs for natural forces.', vocab: ['Tide', 'Salt', 'Current', 'Blue'] },
+  { title: 'Romantic Dinner', icon: '🕯️', cat: 'Entertainment', color: 'bg-rose-600', grammar: 'Softening requests with "would like".', vocab: ['Table', 'Wine', 'Music', 'Light'] },
+  { title: 'School Days', icon: '🏫', cat: 'Essential', color: 'bg-orange-500', grammar: 'Ordinal numbers for grades.', vocab: ['Class', 'Teacher', 'Test', 'Grade'] },
+  { title: 'Tropical Beach', icon: '🌴', cat: 'Travel', color: 'bg-teal-400', grammar: 'Exclamatory sentences (What a...!).', vocab: ['Palm', 'Coconut', 'Shell', 'Sun'] },
+  { title: 'DIY Projects', icon: '🔨', cat: 'Home', color: 'bg-neutral-600', grammar: 'Process verbs for construction.', vocab: ['Tool', 'Measure', 'Build', 'Fix'] },
+  { title: 'Magic Tricks', icon: '🪄', cat: 'Entertainment', color: 'bg-fuchsia-700', grammar: 'Causal conjunctions (because, so).', vocab: ['Card', 'Secret', 'Wand', 'Show'] },
+  { title: 'Space Science', icon: '🪐', cat: 'Science', color: 'bg-purple-900', grammar: 'Scientific passive for phenomena.', vocab: ['Gravity', 'Orbit', 'Mass', 'Force'] },
+  { title: 'Street Art', icon: '🎨', cat: 'Art', color: 'bg-red-500', grammar: 'Present continuous for dynamic scenes.', vocab: ['Spray', 'Wall', 'Mural', 'Color'] },
+  { title: 'Fruit Market', icon: '🍎', cat: 'Food', color: 'bg-green-400', grammar: 'Pluralization of irregular nouns.', vocab: ['Sweet', 'Fresh', 'Ripe', 'Store'] },
+  { title: 'Ancient Rome', icon: '🏛️', cat: 'History', color: 'bg-stone-400', grammar: 'Latin roots in modern grammar.', vocab: ['Forum', 'Senate', 'Law', 'Road'] },
+  { title: 'Coding Life', icon: '⌨️', cat: 'Professional', color: 'bg-slate-900', grammar: 'Conditional logic in language.', vocab: ['Code', 'Bug', 'Deploy', 'Merge'] },
+  { title: 'Urban Life', icon: '🏙️', cat: 'Society', color: 'bg-sky-600', grammar: 'Relative clauses with "where".', vocab: ['Street', 'City', 'Crowd', 'Flat'] },
+];
+
 export const getGrammarDataForLang = (langId: string): GrammarItem[] => {
-  if (GRAMMAR_BANK_DATA[langId]) return GRAMMAR_BANK_DATA[langId];
-  
-  // Generic fallback template for the 50+ languages
-  return [
-    { id: 'f1', title: 'Sentence Structure', icon: '🏗️', explanation: 'Every language has a unique word order (SVO, SOV, etc).', examples: ['The cat sleeps.', 'I love learning.'], color: 'bg-blue-50', level: 'Beginner' },
-    { id: 'f2', title: 'Gendered Nouns', icon: '⚧️', explanation: 'Many languages categorize objects as masculine or feminine.', examples: ['The sun (Masculine)', 'The moon (Feminine)'], color: 'bg-pink-50', level: 'Beginner' },
-    { id: 'f3', title: 'Formal vs Informal', icon: '🎩', explanation: 'Different verb endings or pronouns depending on social status.', examples: ['Formal greeting', 'Friendly greeting'], color: 'bg-indigo-50', level: 'Intermediate' }
-  ];
+  const base = GRAMMAR_BANK_DATA[langId] || [];
+  const genericItems: GrammarItem[] = DEFAULT_TOPICS.map((topic, index) => ({
+    id: `g_gen_${langId}_${index}`,
+    title: topic.title + " Grammar",
+    icon: topic.icon,
+    explanation: topic.grammar,
+    examples: [
+      `How to use vocabulary like "${topic.vocab[0]}" correctly.`,
+      `Applying "${topic.grammar.split('.')[0]}" in a sentence.`
+    ],
+    color: topic.color.replace('bg-', 'bg-').replace('-500', '-100').replace('-600', '-100').replace('-700', '-100').replace('-800', '-100').replace('-900', '-100').replace('-400', '-100'),
+    level: index < 15 ? 'Beginner' : index < 35 ? 'Intermediate' : 'Advanced'
+  }));
+
+  // Ensure unique colors for generic items if replacement logic didn't catch all
+  genericItems.forEach(item => {
+    if (!item.color.endsWith('-100')) item.color = 'bg-gray-100';
+  });
+
+  return [...base, ...genericItems].slice(0, 55); // Limit to a manageable number but enough for "50 more"
 };
 
-export const INITIAL_LESSON_DATA = (): Lesson[] => {
-  const topics = [
-    { title: 'Greetings & Basics', icon: '👋', cat: 'Essential', color: 'bg-yellow-400', grammar: 'Polite particles vary by gender and context.' },
-    { title: 'Street Food Tour', icon: '🍲', cat: 'Food', color: 'bg-orange-400', grammar: 'Using classifiers for ordering different types of dishes.' },
-    { title: 'Finding Your Way', icon: '🗺️', cat: 'Travel', color: 'bg-blue-400', grammar: 'Prepositions of place and movement indicators.' },
-    { title: 'Emergency Help', icon: '🆘', cat: 'Essential', color: 'bg-red-500', grammar: 'Direct imperative verb forms for urgent situations.' },
-    { title: 'At the Market', icon: '🛍️', cat: 'Shopping', color: 'bg-emerald-400', grammar: 'Numerical systems and currency classifiers.' },
-    { title: 'Social Media', icon: '📱', cat: 'Digital', color: 'bg-purple-400', grammar: 'Informal slang and abbreviation rules.' },
-    { title: 'Nature & Parks', icon: '🌳', cat: 'Environment', color: 'bg-green-500', grammar: 'Adjective placement for describing scenery.' },
-    { title: 'Space Exploration', icon: '🚀', cat: 'Science', color: 'bg-indigo-500', grammar: 'Technical loanwords and future tense usage.' },
-    { title: 'Ancient Legends', icon: '🐉', cat: 'Culture', color: 'bg-amber-500', grammar: 'Narrative past tense and mythological honorifics.' },
-    { title: 'Tech Startup', icon: '💻', cat: 'Business', color: 'bg-cyan-500', grammar: 'Professional honorifics in office environments.' },
-    { title: 'Daily Routine', icon: '⏰', cat: 'Daily Life', color: 'bg-rose-400', grammar: 'Time markers and frequency adverbs.' },
-    { title: 'Pet Care', icon: '🐕', cat: 'Home', color: 'bg-teal-400', grammar: 'Possessive particles for relationships.' },
-    { title: 'Music & Art', icon: '🎨', cat: 'Hobbies', color: 'bg-fuchsia-400', grammar: 'Verbs of emotion and sensory descriptions.' },
-    { title: 'In the Kitchen', icon: '🔪', cat: 'Home', color: 'bg-lime-500', grammar: 'Recipe-specific imperatives and sequence markers.' },
-    { title: 'Sports & Fitness', icon: '🏃', cat: 'Health', color: 'bg-violet-500', grammar: 'Comparison structures (faster, stronger).' },
-    { title: 'Weather Forecast', icon: '🌤️', cat: 'Daily Life', color: 'bg-sky-400', grammar: 'Impersonal weather verbs and condition markers.' },
-    { title: 'Romantic Dinner', icon: '🕯️', cat: 'Social', color: 'bg-pink-500', grammar: 'Softening particles for polite invitations.' },
-    { title: 'Public Transport', icon: '🚌', cat: 'Travel', color: 'bg-zinc-500', grammar: 'Locative prepositions for commute.' },
-    { title: 'Coding Basics', icon: '⌨️', cat: 'Digital', color: 'bg-slate-600', grammar: 'Conditional logic structures (if/then).' },
-    { title: 'Mindfulness', icon: '🧘', cat: 'Health', color: 'bg-emerald-300', grammar: 'Stative verbs and continuous present.' },
-    { title: 'Global News', icon: '📰', cat: 'Culture', color: 'bg-blue-400', grammar: 'Formal reporting speech and quoted speech rules.' },
-    { title: 'Aviation History', icon: '✈️', cat: 'History', color: 'bg-neutral-500', grammar: 'Historical past tense markers.' },
-    { title: 'Gardening Tips', icon: '🌻', cat: 'Hobbies', color: 'bg-yellow-300', grammar: 'Spatial descriptors for plant placement.' },
-    { title: 'Fashion Design', icon: '👗', cat: 'Art', color: 'bg-pink-300', grammar: 'Adjective ordering for materials and colors.' },
-    { title: 'Coffee Culture', icon: '☕', cat: 'Social', color: 'bg-stone-600', grammar: 'Intensifiers for adjectives (very, slightly).' },
-    { title: 'Ocean Mysteries', icon: '🐋', cat: 'Environment', color: 'bg-blue-700', grammar: 'Superlatives for describing extremes.' },
-    { title: 'Movie Night', icon: '🎬', cat: 'Entertainment', color: 'bg-red-600', grammar: 'Expressing subjective opinions and reactions.' },
-    { title: 'Board Games', icon: '🎲', cat: 'Social', color: 'bg-yellow-600', grammar: 'Modality of rules (can, must, shouldn\'t).' },
-    { title: 'Architecture', icon: '🏛️', cat: 'Art', color: 'bg-stone-400', grammar: 'Material nouns and structural descriptors.' },
-    { title: 'Cryptocurrency', icon: '₿', cat: 'Business', color: 'bg-orange-500', grammar: 'Dynamic financial vocabulary.' },
-    { title: 'Camping Trip', icon: '🏕️', cat: 'Travel', color: 'bg-green-700', grammar: 'Survival vocabulary and item nouns.' },
-    { title: 'Astronomy', icon: '🔭', cat: 'Science', color: 'bg-slate-900', grammar: 'Compound nouns for celestial bodies.' },
-    { title: 'Volunteering', icon: '🤝', cat: 'Social', color: 'bg-rose-300', grammar: 'Benefactive particles (doing something for others).' },
-    { title: 'Legal Matters', icon: '⚖️', cat: 'Business', color: 'bg-gray-800', grammar: 'Formal negative particles and strict syntax.' },
-    { title: 'Baking Bread', icon: '🍞', cat: 'Hobbies', color: 'bg-amber-300', grammar: 'Process-oriented transition words.' },
-    { title: 'Robotics', icon: '🤖', cat: 'Technology', color: 'bg-zinc-300', grammar: 'Action-result relationship markers.' },
-    { title: 'Photography', icon: '📷', cat: 'Art', color: 'bg-gray-700', grammar: 'Descriptors for light, focus, and perspective.' },
-    { title: 'Public Speaking', icon: '🎤', cat: 'Skills', color: 'bg-indigo-600', grammar: 'Emphasis particles for spoken discourse.' },
-    { title: 'Mountain Climbing', icon: '🧗', cat: 'Sports', color: 'bg-slate-500', grammar: 'Physical exertion state verbs.' },
-    { title: 'Zoo Visit', icon: '🦁', cat: 'Education', color: 'bg-orange-300', grammar: 'Pluralization rules for animal species.' },
-    { title: 'Airport Check-in', icon: '🎫', cat: 'Travel', color: 'bg-sky-600', grammar: 'Standard declarative phrases for services.' },
-    { title: 'Sustainable Living', icon: '♻️', cat: 'Environment', color: 'bg-emerald-600', grammar: 'Modal verbs of obligation and ethics.' },
-    { title: 'Library Study', icon: '📚', cat: 'Education', color: 'bg-amber-800', grammar: 'Academic compound nouns.' },
-    { title: 'Theme Park', icon: '🎡', cat: 'Entertainment', color: 'bg-pink-600', grammar: 'Exclamatory sentence structures.' },
-    { title: 'Winter Sports', icon: '⛷️', cat: 'Sports', color: 'bg-blue-100', grammar: 'Sensory descriptors for cold and motion.' },
-    { title: 'Urban Legend', icon: '👻', cat: 'Culture', color: 'bg-purple-800', grammar: 'Mood-setting syntax and particle choice.' },
-    { title: 'DIY Projects', icon: '🔨', cat: 'Home', color: 'bg-orange-900', grammar: 'Step-by-step logical connectors.' },
-    { title: 'Luxury Travel', icon: '💎', cat: 'Travel', color: 'bg-indigo-300', grammar: 'Extremely polite register for high-end service.' },
-    { title: 'Ancient Egypt', icon: '🏺', cat: 'History', color: 'bg-yellow-800', grammar: 'Past tense markers for ancient history.' },
-    { title: 'Modern Dance', icon: '💃', cat: 'Art', color: 'bg-rose-500', grammar: 'Fluid motion action verbs.' },
-    { title: 'Car Repair', icon: '🔧', cat: 'Skills', color: 'bg-gray-400', grammar: 'Part-whole relationship markers.' },
-    { title: 'Virtual Reality (Advanced)', icon: '🥽', cat: 'Technology', color: 'bg-cyan-600', grammar: 'Spatial prepositions in digital space.' },
-    { title: 'Chess Strategy', icon: '♟️', cat: 'Hobbies', color: 'bg-stone-800', grammar: 'Complex conditional logic (if/then/else).' },
-    { title: 'Yoga Flow (Advanced)', icon: '🧘‍♀️', cat: 'Health', color: 'bg-purple-300', grammar: 'Anatomical imperative alignment.' },
-    { title: 'Scuba Diving (Advanced)', icon: '🤿', cat: 'Travel', color: 'bg-blue-900', grammar: 'Pressure and depth related measurements.' },
-    { title: 'Pottery Class', icon: '🏺', cat: 'Hobbies', color: 'bg-amber-700', grammar: 'Material state change verbs (soft, hard).' },
-    { title: 'High-speed Rail', icon: '🚅', cat: 'Travel', color: 'bg-zinc-200', grammar: 'Time and distance ratio structures.' },
-    { title: 'Renewable Energy (Advanced)', icon: '☀️', cat: 'Environment', color: 'bg-yellow-200', grammar: 'Technical passive voice for systems.' },
-    { title: 'Virtual Concerts', icon: '🎧', cat: 'Entertainment', color: 'bg-fuchsia-600', grammar: 'Digital experience descriptors.' },
-    { title: 'E-commerce', icon: '🛒', cat: 'Business', color: 'bg-blue-500', grammar: 'Transactional verbs and feedback syntax.' },
-    { title: 'Ancient Rome', icon: '🏛️', cat: 'History', color: 'bg-stone-500', grammar: 'Declension patterns for proper names.' },
-    { title: 'Sushi Making', icon: '🍣', cat: 'Food', color: 'bg-red-400', grammar: 'Compound nouns for ingredients.' },
-    { title: 'Space Tourism', icon: '👨‍🚀', cat: 'Science', color: 'bg-indigo-900', grammar: 'Speculative future tense.' },
-    { title: 'Street Photography', icon: '📸', cat: 'Art', color: 'bg-zinc-700', grammar: 'Action-at-a-moment verb structures.' },
-    { title: 'Organic Farming', icon: '🥕', cat: 'Environment', color: 'bg-green-600', grammar: 'Causal relationships in nature.' },
-    { title: 'Jazz Music', icon: '🎷', cat: 'Culture', color: 'bg-amber-900', grammar: 'Improvisational vocabulary and metaphors.' },
-    { title: 'Mobile Gaming', icon: '🎮', cat: 'Digital', color: 'bg-pink-500', grammar: 'Imperative feedback in UI design.' },
-    { title: 'Surfing', icon: '🏄', cat: 'Sports', color: 'bg-sky-500', grammar: 'Describing balance and fluid motion.' },
-    { title: 'Cybersecurity', icon: '🛡️', cat: 'Digital', color: 'bg-slate-800', grammar: 'Defensive and offensive verb pairings.' },
-    { title: 'Wine Tasting', icon: '🍷', cat: 'Social', color: 'bg-rose-800', grammar: 'Nuanced adjectives for flavor and aroma.' },
-    { title: 'Hiking Trails', icon: '🥾', cat: 'Travel', color: 'bg-orange-700', grammar: 'Directional markers for elevation.' },
-    { title: 'Interior Design', icon: '🛋️', cat: 'Home', color: 'bg-stone-300', grammar: 'Color theory adjectives and harmony nouns.' },
-    { title: 'Baking Cakes', icon: '🎂', cat: 'Food', color: 'bg-pink-200', grammar: 'Precise measurements and consistency descriptors.' },
-    { title: 'Fashion Week', icon: '👠', cat: 'Art', color: 'bg-slate-900', grammar: 'Trend-based future markers.' },
-    { title: 'Public Relations', icon: '📢', cat: 'Business', color: 'bg-indigo-400', grammar: 'Persuasive rhetoric and formal address.' },
-    { title: 'Knitting', icon: '🧶', cat: 'Hobbies', color: 'bg-teal-300', grammar: 'Cyclical process markers.' },
-    { title: 'Modern Architecture', icon: '🏢', cat: 'Art', color: 'bg-gray-500', grammar: 'Describing volume, light, and mass.' },
-    { title: 'Meditation (Beginner)', icon: '🕯️', cat: 'Health', color: 'bg-yellow-100', grammar: 'Internal state descriptors.' },
-    { title: 'Social Activism', icon: '✊', cat: 'Culture', color: 'bg-red-600', grammar: 'Collective pronouns and mission-based verbs.' },
-    { title: 'Genetic Engineering', icon: '🧬', cat: 'Science', color: 'bg-green-300', grammar: 'Precise modifications and result clauses.' },
-    { title: 'Classical Literature', icon: '📖', cat: 'Education', color: 'bg-amber-700', grammar: 'Archaic markers and poetic meter vocabulary.' },
-    { title: 'Electric Vehicles', icon: '⚡', cat: 'Technology', color: 'bg-yellow-400', grammar: 'Energy transfer and storage nouns.' },
-    { title: 'Pet Grooming', icon: '✂️', cat: 'Home', color: 'bg-sky-200', grammar: 'Hygiene and aesthetic descriptors.' },
-    { title: 'Mountain Biking', icon: '🚵', cat: 'Sports', color: 'bg-lime-600', grammar: 'Terrain and obstacle navigation verbs.' },
-    { title: 'Podcast Hosting', icon: '🎙️', cat: 'Media', color: 'bg-purple-700', grammar: 'Conversational filler and transition phrases.' },
-    { title: 'Astronomy (Advanced)', icon: '🪐', cat: 'Science', color: 'bg-blue-900', grammar: 'Scale and distance modifiers.' },
-    { title: 'Vegan Lifestyle', icon: '🥗', cat: 'Health', color: 'bg-green-500', grammar: 'Substitutional logic (instead of, replace).' },
-    { title: 'Board Game Strategy', icon: '♟️', cat: 'Social', color: 'bg-stone-800', grammar: 'Competitive game theory vocabulary.' },
-    { title: 'Climate Change (Education)', icon: '🌡️', cat: 'Environment', color: 'bg-orange-600', grammar: 'Cause and effect across long time spans.' },
-    { title: 'Entrepreneurship', icon: '💡', cat: 'Business', color: 'bg-yellow-500', grammar: 'Pitch-based persuasive verbs.' },
-    { title: 'Renaissance Art', icon: '🖼️', cat: 'History', color: 'bg-amber-600', grammar: 'Describing perspective and chiaroscuro.' },
-    { title: 'Cocktail Mixing', icon: '🍸', cat: 'Social', color: 'bg-zinc-600', grammar: 'Ratio and balance descriptors.' },
-    { title: 'Martial Arts (Intermediate)', icon: '🥋', cat: 'Sports', color: 'bg-red-700', grammar: 'Focus and discipline markers.' },
-    { title: 'Artificial Intelligence (Basics)', icon: '🧠', cat: 'Digital', color: 'bg-indigo-500', grammar: 'Logic flow and algorithmic descriptions.' },
-    { title: 'Sustainable Fashion', icon: '👕', cat: 'Environment', color: 'bg-emerald-500', grammar: 'Material sourcing and lifecycle nouns.' },
-    { title: 'Opera Singing', icon: '🎭', cat: 'Art', color: 'bg-rose-600', grammar: 'Vocal range and theatrical vocabulary.' },
-    { title: 'Home Brewing', icon: '🍺', cat: 'Hobbies', color: 'bg-orange-800', grammar: 'Fermentation process markers.' },
-    { title: 'Philosophy (Intermediate)', icon: '💭', cat: 'Education', color: 'bg-gray-400', grammar: 'Abstract reasoning and ontological nouns.' },
-    { title: 'Dog Training', icon: '🦴', cat: 'Home', color: 'bg-amber-200', grammar: 'Positive reinforcement imperative structures.' },
-    { title: 'Archeology (History)', icon: '🏺', cat: 'History', color: 'bg-yellow-900', grammar: 'Excavation and preservation vocabulary.' },
-    { title: 'Video Editing', icon: '🎞️', cat: 'Digital', color: 'bg-slate-900', grammar: 'Linear and non-linear sequence markers.' },
-    { title: 'Graphic Design (Art)', icon: '📐', cat: 'Art', color: 'bg-purple-400', grammar: 'Typographic and layout descriptors.' },
-    { title: 'Investing', icon: '📈', cat: 'Business', color: 'bg-green-700', grammar: 'Risk assessment and yield vocabulary.' },
-    { title: 'Origami (Hobbies)', icon: '🦢', cat: 'Hobbies', color: 'bg-pink-300', grammar: 'Geometric transformation verbs.' },
-    { title: 'Tea Ceremony', icon: '🍵', cat: 'Culture', color: 'bg-teal-600', grammar: 'Ritualistic and meditative verb usage.' },
-    { title: 'Urban Gardening', icon: '🥬', cat: 'Environment', color: 'bg-green-400', grammar: 'Describing confined growth spaces.' },
-    { title: 'Ballet Basics', icon: '🩰', cat: 'Art', color: 'bg-rose-100', grammar: 'Grace and posture descriptors.' },
-    { title: 'Wilderness Survival', icon: '🔥', cat: 'Skills', color: 'bg-orange-950', grammar: 'Primitive imperative structures.' },
-    { title: 'Genealogy', icon: '🌳', cat: 'History', color: 'bg-brown-600', grammar: 'Extended kinship particles.' },
-    { title: 'Modern Dance (Advanced)', icon: '👯', cat: 'Art', color: 'bg-rose-500', grammar: 'Kinetic flow vocabulary.' },
-    { title: 'Nuclear Fusion', icon: '⚛️', cat: 'Science', color: 'bg-indigo-300', grammar: 'Physics-based cause and effect clauses.' },
-    { title: 'Perfume Making', icon: '🧴', cat: 'Chemistry', color: 'bg-pink-400', grammar: 'Describing ephemeral sensations.' },
-    { title: 'Calligraphy', icon: '🖌️', cat: 'Art', color: 'bg-stone-800', grammar: 'Stroke-based action verbs.' },
-    { title: 'Cryptology', icon: '🔐', cat: 'Math', color: 'bg-blue-800', grammar: 'Enciphering and deciphering logic.' },
-    { title: 'Beekeeping', icon: '🐝', cat: 'Nature', color: 'bg-yellow-600', grammar: 'Collective behavior descriptors.' },
-    { title: 'Urban Planning', icon: '🏙️', cat: 'Society', color: 'bg-sky-400', grammar: 'Population and flow dynamics.' },
-    { title: 'Microscopy', icon: '🔬', cat: 'Science', color: 'bg-emerald-200', grammar: 'Describing the invisible and minute.' },
-    { title: 'Puppetry', icon: '🎎', cat: 'Art', color: 'bg-red-800', grammar: 'Manipulative action verbs.' },
-    { title: 'Meteorology', icon: '⛈️', cat: 'Science', color: 'bg-blue-300', grammar: 'Forecasting probability markers.' },
-    { title: 'Woodworking', icon: '🪵', cat: 'Hobbies', color: 'bg-amber-900', grammar: 'Material subtractive process verbs.' },
-    { title: 'Marine Biology', icon: '🐚', cat: 'Nature', color: 'bg-cyan-700', grammar: 'Underwater anatomical descriptors.' },
-    { title: 'Bonsai Care', icon: '🪴', cat: 'Hobbies', color: 'bg-green-900', grammar: 'Restricted growth imperatives.' },
-    { title: 'Quantum Physics', icon: '🌀', cat: 'Science', color: 'bg-violet-900', grammar: 'Probability and uncertainty markers.' },
-    { title: 'Mythical Creatures', icon: '🦄', cat: 'Fantasy', color: 'bg-fuchsia-300', grammar: 'Legendary past tense and hearsay.' },
-    { title: 'Horology', icon: '⌚', cat: 'Craft', color: 'bg-zinc-600', grammar: 'Precision and mechanical timing verbs.' },
-    { title: 'Mycology', icon: '🍄', cat: 'Nature', color: 'bg-red-900', grammar: 'Growth and symbiotic descriptors.' },
-    { title: 'Linguistics', icon: '👅', cat: 'Education', color: 'bg-indigo-500', grammar: 'Meta-language for language analysis.' },
-    { title: 'Social Psychology', icon: '👥', cat: 'Society', color: 'bg-teal-400', grammar: 'Group dynamics and behavior verbs.' },
-    { title: 'Civil Engineering', icon: '🏗️', cat: 'Society', color: 'bg-orange-800', grammar: 'Load and stress relationship markers.' },
-    { title: 'Ethnobotany', icon: '🌿', cat: 'History', color: 'bg-emerald-800', grammar: 'Cultural plant usage verbs.' },
-    { title: 'Vexillology', icon: '🚩', cat: 'History', color: 'bg-red-400', grammar: 'Symbolic meaning descriptors.' },
-    { title: 'Oceanography', icon: '🌊', cat: 'Science', color: 'bg-blue-600', grammar: 'Current and tide cycle markers.' },
-    { title: 'Ice Sculpting', icon: '🧊', cat: 'Art', color: 'bg-sky-100', grammar: 'Describing fragility and melting.' },
-    { title: 'Pyrotechnics', icon: '🎆', cat: 'Chemistry', color: 'bg-orange-600', grammar: 'Combustion and light effect markers.' },
-    { title: 'Cartography', icon: '🗺️', cat: 'Geography', color: 'bg-amber-400', grammar: 'Projection and orientation descriptors.' },
-    { title: 'Nanotechnology', icon: '🤏', cat: 'Science', color: 'bg-slate-400', grammar: 'Atomic-scale action verbs.' },
-    { title: 'Taxidermy', icon: '🦅', cat: 'Craft', color: 'bg-stone-500', grammar: 'Preservation and pose descriptors.' },
-    { title: 'Glassblowing', icon: '🔥', cat: 'Art', color: 'bg-orange-400', grammar: 'Viscosity and heat relationship verbs.' },
-    { title: 'Entomology', icon: '🪲', cat: 'Nature', color: 'bg-green-700', grammar: 'Exoskeleton anatomical terms.' },
-    { title: 'Etymology', icon: '📜', cat: 'Language', color: 'bg-yellow-800', grammar: 'Root and evolution markers.' },
-    { title: 'Speleology', icon: '🔦', cat: 'Nature', color: 'bg-zinc-900', grammar: 'Cave exploration spatial terms.' },
-    { title: 'Brewing Coffee', icon: '☕', cat: 'Food', color: 'bg-stone-800', grammar: 'Extraction and temperature variables.' },
-    { title: 'Baking Pastries', icon: '🥐', cat: 'Food', color: 'bg-orange-200', grammar: 'Layering and texture descriptors.' },
-    { title: 'Kite Flying', icon: '🪁', cat: 'Hobbies', color: 'bg-sky-400', grammar: 'Aerodynamic lift and drag markers.' },
-    { title: 'Bird Watching', icon: '🔭', cat: 'Nature', color: 'bg-emerald-600', grammar: 'Observation and identification verbs.' },
-    { title: 'Soap Making', icon: '🧼', cat: 'Craft', color: 'bg-pink-100', grammar: 'Saponification process markers.' },
-    { title: 'Candle Making', icon: '🕯️', cat: 'Craft', color: 'bg-amber-100', grammar: 'Melting point and scent infusion.' },
-    { title: 'Fly Fishing', icon: '🎣', cat: 'Hobbies', color: 'bg-blue-400', grammar: 'Cast and reel rhythm markers.' },
-    { title: 'Stargazing', icon: '🌌', cat: 'Nature', color: 'bg-black', grammar: 'Cosmic scale and light-year verbs.' },
-    { title: 'Urban Exploring', icon: '🏚️', cat: 'Society', color: 'bg-gray-700', grammar: 'Decay and discovery descriptors.' },
-    { title: 'Foraging', icon: '🧺', cat: 'Nature', color: 'bg-emerald-900', grammar: 'Edibility and toxicity identification.' },
-    { title: 'Geocaching', icon: '📍', cat: 'Hobbies', color: 'bg-green-500', grammar: 'GPS-based spatial markers.' },
-    { title: 'Tea Blending', icon: '🍂', cat: 'Food', color: 'bg-amber-300', grammar: 'Infusion and balance vocabulary.' },
-    { title: 'Rock Climbing', icon: '🧗‍♂️', cat: 'Sports', color: 'bg-stone-500', grammar: 'Grip and ascent strategy verbs.' },
-    { title: 'Knot Tying', icon: '🪢', cat: 'Skills', color: 'bg-blue-300', grammar: 'Structural loop and friction logic.' }
-  ];
-
-  return topics.map((t, i) => ({
+export const getLessonsForLang = (langId: string): Lesson[] => {
+  return DEFAULT_TOPICS.map((t, i) => ({
     id: `l${i}`,
     title: t.title,
     category: t.cat,
-    difficulty: i < 40 ? 'Beginner' : i < 100 ? 'Intermediate' : 'Advanced',
-    // Mark first 15 as completed so they definitely show up in Grammar Bank and Review Hub
-    progress: i < 15 ? 100 : 0, 
+    difficulty: i < 15 ? 'Beginner' : i < 35 ? 'Intermediate' : 'Advanced',
+    progress: i === 0 ? 100 : 0, 
     icon: t.icon,
     color: t.color,
     grammarNotes: t.grammar,
-    vocabulary: [
-      `${t.title} Key Word 1`, 
-      `${t.title} Key Word 2`, 
-      `${t.title} Common Phrase`, 
-      `${t.title} Idiom`
-    ],
-    // Scatter some review needs across the list
-    needsReview: i % 10 === 0 && i < 40 
+    vocabulary: t.vocab,
+    needsReview: i % 10 === 0 && i > 0 // Scatter some review needs
   }));
 };
 
-export const MOCK_LESSONS: Lesson[] = INITIAL_LESSON_DATA();
+export const INITIAL_LESSON_DATA = (): Lesson[] => getLessonsForLang('en-us');
 
 export const MOCK_QUIZ_GREETINGS = [
   {
@@ -278,7 +178,6 @@ export const MOCK_QUIZ_GREETINGS = [
       { key: 'Bonjour', value: 'Hello (French)' },
       { key: 'Hola', value: 'Hello (Spanish)' },
       { key: 'Ciao', value: 'Hello/Goodbye (Italian)' },
-      { key: 'Sawadee', value: 'Hello (Thai)' }
     ]
   },
   {
@@ -288,13 +187,6 @@ export const MOCK_QUIZ_GREETINGS = [
     options: ['Hey', 'Good morning', 'Yo', 'What\'s up'],
     correctAnswer: 'Good morning'
   },
-  {
-    id: 'q3',
-    type: 'ARRANGE',
-    prompt: 'Put the words in order for a basic introduction:',
-    options: ['My', 'name', 'is', 'Lingo'],
-    correctAnswer: ['My', 'name', 'is', 'Lingo']
-  }
 ];
 
 export const MOCK_GOALS: DailyGoal[] = [
