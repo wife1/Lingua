@@ -113,7 +113,7 @@ const GrammarBank: React.FC<GrammarBankProps> = ({ language, items, onUpdateItem
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300">🔍</span>
           <input 
             type="text" 
-            placeholder="Search 500+ grammar rules..."
+            placeholder="Search 600+ linguistic rules..."
             className="pl-9 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold outline-none focus:ring-4 focus:ring-blue-400/10 focus:border-blue-200 transition-all w-full shadow-sm placeholder:text-gray-300"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
