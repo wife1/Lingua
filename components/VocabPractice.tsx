@@ -12,13 +12,18 @@ const VocabPractice: React.FC<VocabPracticeProps> = ({ lesson, onClose, onComple
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [direction, setDirection] = useState<'next' | 'none'>('none');
 
   const vocab = lesson.vocabulary || ['New Word'];
 
   const handleNext = () => {
     if (currentIndex < vocab.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      setIsFlipped(false);
+      setDirection('next');
+      setTimeout(() => {
+        setCurrentIndex(prev => prev + 1);
+        setIsFlipped(false);
+        setDirection('none');
+      }, 300);
     } else {
       setCompleted(true);
       onComplete(vocab.length * 5); // 5 XP per word practiced
@@ -55,7 +60,7 @@ const VocabPractice: React.FC<VocabPracticeProps> = ({ lesson, onClose, onComple
       </div>
 
       <div 
-        className={`w-full aspect-[4/5] perspective-1000 cursor-pointer group`}
+        className={`w-full aspect-[4/5] perspective-1000 cursor-pointer group transition-all duration-300 ${direction === 'next' ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}`}
         onClick={() => setIsFlipped(!isFlipped)}
       >
         <div className={`relative w-full h-full transition-transform duration-700 preserve-3d shadow-xl rounded-3xl ${isFlipped ? 'rotate-y-180' : ''}`}>

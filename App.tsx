@@ -115,6 +115,11 @@ const App: React.FC = () => {
     }));
   };
 
+  const handleRating = (lessonId: string, rating: number) => {
+    const updatedLessons = lessons.map(l => l.id === lessonId ? { ...l, rating } : l);
+    setAllLanguageLessons(prev => ({ ...prev, [selectedLanguage.id]: updatedLessons }));
+  };
+
   const handleVocabComplete = (earnedXp: number) => {
     setXp(prev => prev + earnedXp);
     setActiveVocabLesson(null);
@@ -273,6 +278,7 @@ const App: React.FC = () => {
                     onClick={() => setShowLessonDetail(lesson)} 
                     onShowGrammar={() => setShowGrammarPop(lesson)}
                     onPracticeVocab={() => setActiveVocabLesson(lesson)}
+                    onRate={handleRating}
                   />
                 ))}
               </div>
@@ -281,24 +287,26 @@ const App: React.FC = () => {
         );
 
       case AppView.REVIEW:
-        const completedLessons = lessons.filter(l => l.progress > 0);
         const reviewRequired = lessons.filter(l => l.needsReview);
+        const grammarLessons = lessons.filter(l => l.grammarNotes);
+        
         return (
-          <div className="max-w-4xl mx-auto space-y-10 animate-in fade-in slide-in-from-left-4 duration-500 pb-20">
-            <h2 className="text-2xl font-black text-gray-800 font-outfit tracking-tight">Review Hub</h2>
+          <div className="max-w-5xl mx-auto space-y-12 animate-in fade-in slide-in-from-left-4 duration-500 pb-20">
+            <h2 className="text-3xl font-black text-gray-800 font-outfit tracking-tight">Review Hub</h2>
+            
             {reviewRequired.length > 0 && (
               <section>
-                <h3 className="text-lg font-black text-red-500 mb-6 font-outfit flex items-center gap-3">
-                  <span className="w-2 h-6 bg-red-500 rounded-full"></span>
+                <h3 className="text-xl font-black text-red-500 mb-6 font-outfit flex items-center gap-3">
+                  <span className="w-2.5 h-8 bg-red-500 rounded-full"></span>
                   Ready for Review
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {reviewRequired.map(l => (
-                    <div key={l.id} className="bg-white p-5 rounded-2xl border border-red-100 shadow-sm flex items-center justify-between group hover:border-red-400 transition-all">
+                    <div key={l.id} className="bg-white p-5 rounded-2xl border border-red-100 shadow-sm flex items-center justify-between group hover:border-red-400 transition-all hover:shadow-md">
                       <div className="flex items-center gap-4">
                         <div className={`w-12 h-12 ${l.color} rounded-xl flex items-center justify-center text-3xl shadow-sm`}>{l.icon}</div>
-                        <div>
-                          <p className="font-bold text-gray-800 leading-tight">{l.title}</p>
+                        <div className="min-w-0">
+                          <p className="font-bold text-gray-800 leading-tight truncate">{l.title}</p>
                           <p className="text-[9px] text-red-400 uppercase font-black tracking-widest mt-1">Reviewing Now</p>
                         </div>
                       </div>
@@ -313,30 +321,53 @@ const App: React.FC = () => {
                 </div>
               </section>
             )}
+
             <section>
-              <h3 className="text-lg font-black text-gray-800 mb-6 font-outfit flex items-center gap-3">
-                <span className="w-2 h-6 bg-blue-500 rounded-full"></span>
-                Grammar Bank
-              </h3>
-              {completedLessons.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4">
-                  {completedLessons.map(l => l.grammarNotes ? (
-                    <div key={l.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:border-yellow-200 transition-all group">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className={`w-10 h-10 ${l.color} rounded-lg flex items-center justify-center text-xl shadow-sm`}>{l.icon}</div>
-                        <h4 className="font-bold text-gray-800">{l.title}</h4>
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-xl font-black text-gray-800 font-outfit flex items-center gap-3">
+                  <span className="w-2.5 h-8 bg-blue-500 rounded-full"></span>
+                  Grammar Bank
+                </h3>
+                <span className="text-[10px] font-black text-gray-400 uppercase bg-gray-100 px-3 py-1 rounded-full">{grammarLessons.length} Modules Available</span>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {grammarLessons.map(l => {
+                  const isLocked = l.progress === 0;
+                  return (
+                    <div 
+                      key={l.id} 
+                      className={`bg-white p-6 rounded-2xl border transition-all group relative ${
+                        isLocked ? 'border-gray-100 opacity-60 grayscale-[0.5]' : 'border-blue-100 shadow-sm hover:border-blue-300 hover:shadow-md'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 ${isLocked ? 'bg-gray-200' : l.color} rounded-lg flex items-center justify-center text-xl shadow-sm transition-transform group-hover:scale-110`}>
+                            {isLocked ? '🔒' : l.icon}
+                          </div>
+                          <h4 className={`font-bold ${isLocked ? 'text-gray-400' : 'text-gray-800'}`}>{l.title}</h4>
+                        </div>
+                        {isLocked ? (
+                          <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Locked</span>
+                        ) : (
+                          <span className="text-[9px] font-black text-blue-500 uppercase bg-blue-50 px-2 py-0.5 rounded-md">Unlocked</span>
+                        )}
                       </div>
-                      <p className="text-sm text-gray-600 italic leading-relaxed bg-gray-50/50 p-4 rounded-xl border border-gray-100/50">
-                        "{l.grammarNotes}"
-                      </p>
+                      <div className={`p-4 rounded-xl border relative ${isLocked ? 'bg-gray-50 border-gray-100 overflow-hidden' : 'bg-blue-50/50 border-blue-100/50'}`}>
+                        {isLocked && (
+                          <div className="absolute inset-0 bg-gray-50/80 backdrop-blur-[2px] flex items-center justify-center z-10 p-4">
+                             <p className="text-[10px] font-black text-gray-400 uppercase text-center leading-tight">Complete the module to unlock the full breakdown</p>
+                          </div>
+                        )}
+                        <p className={`text-sm italic leading-relaxed ${isLocked ? 'blur-sm select-none' : 'text-gray-600 font-medium'}`}>
+                          "{l.grammarNotes}"
+                        </p>
+                      </div>
                     </div>
-                  ) : null)}
-                </div>
-              ) : (
-                <div className="bg-white p-12 rounded-2xl text-center border-2 border-dashed border-gray-100 shadow-inner">
-                  <p className="text-gray-400 font-black text-lg">Master modules to unlock Grammar Bank!</p>
-                </div>
-              )}
+                  );
+                })}
+              </div>
             </section>
           </div>
         );
@@ -404,7 +435,7 @@ const App: React.FC = () => {
         {/* Start Confirmation Modal */}
         {confirmStart && (
           <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-md animate-in fade-in duration-300 px-6">
-            <div className="bg-white rounded-3xl p-10 max-w-sm w-full text-center shadow-2xl scale-in-center border-t-[10px] border-yellow-400 relative">
+            <div className="bg-white rounded-3xl p-10 max-sm w-full text-center shadow-2xl scale-in-center border-t-[10px] border-yellow-400 relative">
               <div className="text-7xl mb-6 animate-bounce-short">{confirmStart.icon}</div>
               <h3 className="text-2xl font-black text-gray-800 mb-2 font-outfit tracking-tight">Ready?</h3>
               <p className="text-gray-500 mb-8 leading-relaxed font-bold tracking-tight px-4 text-sm">

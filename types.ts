@@ -27,6 +27,7 @@ export type Lesson = {
   vocabulary?: string[];
   needsReview?: boolean;
   lastScore?: number;
+  rating?: number; // Added rating property
 };
 
 export type QuestionType = 'MATCH' | 'MULTIPLE_CHOICE' | 'TRANSLATE' | 'ARRANGE';
