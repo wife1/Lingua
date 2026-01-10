@@ -1,5 +1,5 @@
 
-import { Language, Lesson, DailyGoal } from './types';
+import { Language, Lesson, DailyGoal, GrammarItem } from './types';
 
 export const LANGUAGES: Language[] = [
   { id: 'en-us', name: 'English (US)', nativeName: 'English', flag: '🇺🇸' },
@@ -45,7 +45,7 @@ export const LANGUAGES: Language[] = [
   { id: 'eo', name: 'Esperanto', nativeName: 'Esperanto', flag: '🌍' },
   { id: 'ady', name: 'Adyghe', nativeName: 'Адыгабзэ', flag: '🇷🇺' },
   { id: 'af', name: 'Afrikaans', nativeName: 'Afrikaans', flag: '🇿🇦' },
-  { id: 'am', name: 'Amharic', nativeName: 'አማርኛ', flag: '🇪🇹' },
+  { id: 'am', name: 'Amharic', nativeName: 'አማርኛ', flag: '🇪ት' },
   { id: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
   { id: 'hy', name: 'Armenian', nativeName: 'Հայերեն', flag: '🇦🇲' },
   { id: 'be', name: 'Belarusian', nativeName: 'Беларуская', flag: '🇧🇾' },
@@ -55,10 +55,37 @@ export const LANGUAGES: Language[] = [
   { id: 'ca', name: 'Catalan', nativeName: 'Català', flag: '🇦🇩' },
   { id: 'zh', name: 'Chinese (Simplified)', nativeName: '简体中文', flag: '🇨🇳' },
   { id: 'hr', name: 'Croatian', nativeName: 'Hrvatski', flag: '🇭🇷' },
-  { id: 'cs', name: 'Czech', nativeName: 'Čေština', flag: '🇨🇿' },
+  { id: 'cs', name: 'Czech', nativeName: 'Čeština', flag: '🇨🇿' },
   { id: 'da', name: 'Danish', nativeName: 'Dansk', flag: '🇩🇰' },
   { id: 'nl', name: 'Dutch', nativeName: 'Nederlands', flag: '🇳🇱' },
 ];
+
+export const GRAMMAR_BANK_DATA: Record<string, GrammarItem[]> = {
+  'en-us': [
+    { id: 'g1', title: 'Present Continuous', icon: '⏳', explanation: 'Used to describe actions happening right now.', examples: ['I am learning.', 'He is eating.'], color: 'bg-blue-100', level: 'Beginner' },
+    { id: 'g2', title: 'Modal Verbs', icon: '❓', explanation: 'Verbs that indicate necessity or possibility.', examples: ['I must go.', 'You can stay.'], color: 'bg-yellow-100', level: 'Intermediate' }
+  ],
+  'es': [
+    { id: 'g1', title: 'Ser vs Estar', icon: '🔄', explanation: 'Both mean "to be", but "Ser" is permanent and "Estar" is temporary.', examples: ['Soy alto.', 'Estoy feliz.'], color: 'bg-red-100', level: 'Beginner' },
+    { id: 'g2', title: 'The Subjunctive', icon: '🧠', explanation: 'Used for desires, doubts, and the unknown.', examples: ['Espero que vengas.', 'Dudo que sea así.'], color: 'bg-purple-100', level: 'Advanced' }
+  ],
+  'th': [
+    { id: 'g1', title: 'Polite Particles', icon: '🙏', explanation: 'Added to the end of sentences to show respect (Krap/Ka).', examples: ['Sawasdee krap.', 'Khob khun ka.'], color: 'bg-yellow-100', level: 'Beginner' },
+    { id: 'g2', title: 'Classifiers', icon: '🔢', explanation: 'Specific nouns used when counting items.', examples: ['Maew song dtua (Two cats).'], color: 'bg-green-100', level: 'Intermediate' }
+  ]
+};
+
+// Function to get grammar data with a generic fallback if the language isn't explicitly defined
+export const getGrammarDataForLang = (langId: string): GrammarItem[] => {
+  if (GRAMMAR_BANK_DATA[langId]) return GRAMMAR_BANK_DATA[langId];
+  
+  // Generic fallback template for the 50+ languages
+  return [
+    { id: 'f1', title: 'Sentence Structure', icon: '🏗️', explanation: 'Every language has a unique word order (SVO, SOV, etc).', examples: ['The cat sleeps.', 'I love learning.'], color: 'bg-blue-50', level: 'Beginner' },
+    { id: 'f2', title: 'Gendered Nouns', icon: '⚧️', explanation: 'Many languages categorize objects as masculine or feminine.', examples: ['The sun (Masculine)', 'The moon (Feminine)'], color: 'bg-pink-50', level: 'Beginner' },
+    { id: 'f3', title: 'Formal vs Informal', icon: '🎩', explanation: 'Different verb endings or pronouns depending on social status.', examples: ['Formal greeting', 'Friendly greeting'], color: 'bg-indigo-50', level: 'Intermediate' }
+  ];
+};
 
 export const INITIAL_LESSON_DATA = (): Lesson[] => {
   const topics = [

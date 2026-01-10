@@ -27,7 +27,17 @@ export type Lesson = {
   vocabulary?: string[];
   needsReview?: boolean;
   lastScore?: number;
-  rating?: number; // Added rating property
+  rating?: number;
+};
+
+export type GrammarItem = {
+  id: string;
+  title: string;
+  icon: string;
+  explanation: string;
+  examples: string[];
+  color: string;
+  level: string;
 };
 
 export type QuestionType = 'MATCH' | 'MULTIPLE_CHOICE' | 'TRANSLATE' | 'ARRANGE';

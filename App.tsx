@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { AppView, Language, Lesson, Badge, DailyGoal } from './types';
-import { LANGUAGES, INITIAL_LESSON_DATA, MOCK_QUIZ_GREETINGS, MOCK_GOALS } from './constants';
+import { AppView, Language, Lesson, Badge, DailyGoal, GrammarItem } from './types';
+import { LANGUAGES, INITIAL_LESSON_DATA, MOCK_QUIZ_GREETINGS, MOCK_GOALS, getGrammarDataForLang } from './constants';
 import Sidebar from './components/Sidebar';
 import LessonCard from './components/LessonCard';
 import ChatInterface from './components/ChatInterface';
 import Quiz from './components/Quiz';
 import VocabPractice from './components/VocabPractice';
+import GrammarBank from './components/GrammarBank';
 
 const INITIAL_BADGES: Badge[] = [
   { id: 'b1', name: 'First Word', description: 'Complete your first lesson', icon: '🌱', unlocked: false, requirement: 'lessons:1' },
@@ -22,8 +23,6 @@ const App: React.FC = () => {
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
   const [activeVocabLesson, setActiveVocabLesson] = useState<Lesson | null>(null);
   const [showLessonDetail, setShowLessonDetail] = useState<Lesson | null>(null);
-  const [showGrammarPop, setShowGrammarPop] = useState<Lesson | null>(null);
-  const [confirmStart, setConfirmStart] = useState<Lesson | null>(null);
   const [showLanguageBoard, setShowLanguageBoard] = useState(false);
   const [langSearch, setLangSearch] = useState('');
   
@@ -34,15 +33,22 @@ const App: React.FC = () => {
   const [badges, setBadges] = useState<Badge[]>(INITIAL_BADGES);
   const [studiedLanguages, setStudiedLanguages] = useState<Set<string>>(new Set([LANGUAGES[0].id]));
   const [lastReward, setLastReward] = useState<{ coins: number, xp: number } | null>(null);
-  const [newBadgeNotification, setNewBadgeNotification] = useState<Badge | null>(null);
+  const [confirmStart, setConfirmStart] = useState<Lesson | null>(null);
 
   const [allLanguageLessons, setAllLanguageLessons] = useState<Record<string, Lesson[]>>({
     [LANGUAGES[0].id]: INITIAL_LESSON_DATA()
   });
 
+  // State to hold grammar items, initialized from constants but allows updates via Import
+  const [customGrammarData, setCustomGrammarData] = useState<Record<string, GrammarItem[]>>({});
+
   const lessons = useMemo(() => {
     return allLanguageLessons[selectedLanguage.id] || INITIAL_LESSON_DATA();
   }, [allLanguageLessons, selectedLanguage.id]);
+
+  const grammarBankItems = useMemo(() => {
+    return customGrammarData[selectedLanguage.id] || getGrammarDataForLang(selectedLanguage.id);
+  }, [selectedLanguage.id, customGrammarData]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string | null>(null);
@@ -83,7 +89,6 @@ const App: React.FC = () => {
       }
       if (isUnlocked) {
         changed = true;
-        setNewBadgeNotification(badge);
         return { ...badge, unlocked: true };
       }
       return badge;
@@ -108,11 +113,6 @@ const App: React.FC = () => {
     });
 
     setAllLanguageLessons(prev => ({ ...prev, [selectedLanguage.id]: updatedLessons }));
-    setDailyGoals(prev => prev.map(g => {
-      if (g.id === 'g1') return { ...g, current: Math.min(g.target, g.current + 1), completed: g.current + 1 >= g.target };
-      if (g.id === 'g3') return { ...g, current: Math.min(g.target, g.current + earnedXp), completed: g.current + earnedXp >= g.target };
-      return g;
-    }));
   };
 
   const handleRating = (lessonId: string, rating: number) => {
@@ -123,6 +123,13 @@ const App: React.FC = () => {
   const handleVocabComplete = (earnedXp: number) => {
     setXp(prev => prev + earnedXp);
     setActiveVocabLesson(null);
+  };
+
+  const handleUpdateGrammarItems = (newItems: GrammarItem[]) => {
+    setCustomGrammarData(prev => ({
+      ...prev,
+      [selectedLanguage.id]: newItems
+    }));
   };
 
   const handleLanguageChange = (lang: Language) => {
@@ -276,7 +283,7 @@ const App: React.FC = () => {
                     key={lesson.id} 
                     lesson={lesson} 
                     onClick={() => setShowLessonDetail(lesson)} 
-                    onShowGrammar={() => setShowGrammarPop(lesson)}
+                    onShowGrammar={() => {}}
                     onPracticeVocab={() => setActiveVocabLesson(lesson)}
                     onRate={handleRating}
                   />
@@ -288,7 +295,6 @@ const App: React.FC = () => {
 
       case AppView.REVIEW:
         const reviewRequired = lessons.filter(l => l.needsReview);
-        const grammarLessons = lessons.filter(l => l.grammarNotes);
         
         return (
           <div className="max-w-5xl mx-auto space-y-12 animate-in fade-in slide-in-from-left-4 duration-500 pb-20">
@@ -322,53 +328,11 @@ const App: React.FC = () => {
               </section>
             )}
 
-            <section>
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-black text-gray-800 font-outfit flex items-center gap-3">
-                  <span className="w-2.5 h-8 bg-blue-500 rounded-full"></span>
-                  Grammar Bank
-                </h3>
-                <span className="text-[10px] font-black text-gray-400 uppercase bg-gray-100 px-3 py-1 rounded-full">{grammarLessons.length} Modules Available</span>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {grammarLessons.map(l => {
-                  const isLocked = l.progress === 0;
-                  return (
-                    <div 
-                      key={l.id} 
-                      className={`bg-white p-6 rounded-2xl border transition-all group relative ${
-                        isLocked ? 'border-gray-100 opacity-60 grayscale-[0.5]' : 'border-blue-100 shadow-sm hover:border-blue-300 hover:shadow-md'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 ${isLocked ? 'bg-gray-200' : l.color} rounded-lg flex items-center justify-center text-xl shadow-sm transition-transform group-hover:scale-110`}>
-                            {isLocked ? '🔒' : l.icon}
-                          </div>
-                          <h4 className={`font-bold ${isLocked ? 'text-gray-400' : 'text-gray-800'}`}>{l.title}</h4>
-                        </div>
-                        {isLocked ? (
-                          <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Locked</span>
-                        ) : (
-                          <span className="text-[9px] font-black text-blue-500 uppercase bg-blue-50 px-2 py-0.5 rounded-md">Unlocked</span>
-                        )}
-                      </div>
-                      <div className={`p-4 rounded-xl border relative ${isLocked ? 'bg-gray-50 border-gray-100 overflow-hidden' : 'bg-blue-50/50 border-blue-100/50'}`}>
-                        {isLocked && (
-                          <div className="absolute inset-0 bg-gray-50/80 backdrop-blur-[2px] flex items-center justify-center z-10 p-4">
-                             <p className="text-[10px] font-black text-gray-400 uppercase text-center leading-tight">Complete the module to unlock the full breakdown</p>
-                          </div>
-                        )}
-                        <p className={`text-sm italic leading-relaxed ${isLocked ? 'blur-sm select-none' : 'text-gray-600 font-medium'}`}>
-                          "{l.grammarNotes}"
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
+            <GrammarBank 
+              language={selectedLanguage}
+              items={grammarBankItems}
+              onUpdateItems={handleUpdateGrammarItems}
+            />
           </div>
         );
       case AppView.CHAT:
