@@ -67,7 +67,8 @@ export const GRAMMAR_BANK_DATA: Record<string, GrammarItem[]> = {
   ],
 };
 
-const INITIAL_400_TOPICS = [
+// const INITIAL_400_TOPICS = [
+const INITIAL_600_TOPICS = [
   { title: 'Greetings & Basics', icon: '👋', cat: 'Essential', color: 'bg-yellow-400', grammar: 'Polite particles vary by gender and context.', vocab: ['Hello', 'Good Morning', 'Thank you', 'Please'] },
   { title: 'Street Food Tour', icon: '🍲', cat: 'Food', color: 'bg-orange-400', grammar: 'Using classifiers for ordering different types of dishes.', vocab: ['Rice', 'Spicy', 'Yummy', 'Bill'] },
   { title: 'Finding Your Way', icon: '🗺️', cat: 'Travel', color: 'bg-blue-400', grammar: 'Prepositions of place and movement indicators.', vocab: ['Left', 'Right', 'Straight', 'Map'] },
@@ -568,9 +569,8 @@ const INITIAL_400_TOPICS = [
   { title: 'Deep Sea Bots', icon: '🤖', cat: 'Science', color: 'bg-blue-800', grammar: 'Technical command structures.', vocab: ['Swim', 'Scan', 'Deep', 'Send'] },
   { title: 'Safe Hacking', icon: '⌨️', cat: 'Digital', color: 'bg-emerald-900', grammar: 'Instructional sequence for logic.', vocab: ['Code', 'Find', 'Wall', 'Link'] },
   { title: 'Space Archaeology', icon: '🏺', cat: 'History', color: 'bg-indigo-950', grammar: 'Future perfect for finding relics.', vocab: ['Old', 'Star', 'Find', 'Ship'] }
-];
-
-const NEW_100_TOPICS = [
+// ];
+// const NEW_100_TOPICS = [
   { title: 'AI Philosophy', icon: '🧠', cat: 'Science', color: 'bg-indigo-900', grammar: 'Hypothetical future conditional markers.', vocab: ['Sentient', 'Ethics', 'Logic', 'Code'] },
   { title: 'Micro-Culinary Art', icon: '🧪', cat: 'Food', color: 'bg-emerald-500', grammar: 'Instructional adverbs for precision.', vocab: ['Gel', 'Foam', 'Taste', 'Fine'] },
   { title: 'Mars Infrastructure', icon: '🏙️', cat: 'Professional', color: 'bg-red-800', grammar: 'Passive voice for engineering plans.', vocab: ['Base', 'Wall', 'Air', 'Link'] },
@@ -673,8 +673,8 @@ const NEW_100_TOPICS = [
   { title: 'Exoplanet Journey', icon: '🌌', cat: 'Travel', color: 'bg-indigo-900', grammar: 'Future perfect continuous.', vocab: ['Fly', 'Time', 'Star', 'Far'] }
 ];
 
-const DEFAULT_TOPICS = [...INITIAL_400_TOPICS, ...NEW_100_TOPICS];
-
+// const DEFAULT_TOPICS = [...INITIAL_400_TOPICS, ...NEW_100_TOPICS];
+const DEFAULT_TOPICS = [...INITIAL_600_TOPICS];
 export const getGrammarDataForLang = (langId: string): GrammarItem[] => {
   const base = GRAMMAR_BANK_DATA[langId] || [];
   const genericItems: GrammarItem[] = DEFAULT_TOPICS.map((topic, index) => ({
