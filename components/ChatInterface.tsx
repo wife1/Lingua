@@ -1,23 +1,28 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage, Language } from '../types';
+// import { ChatMessage } from '../types';
 import { startAIChat } from '../services/geminiService';
 
 interface ChatInterfaceProps {
   language: Language;
+  onOpenLanguageSelector: () => void;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ language }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: `Sawadee! Ready to practice ${language.name}?`, timestamp: new Date() }
-  ]);
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ language, onOpenLanguageSelector }) => {
+// const ChatInterface: React.FC<ChatInterfaceProps> = ({ onOpenLanguageSelector }) => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const chatInstance = useRef<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Initialize chat when component mounts or language changes
   useEffect(() => {
     const initChat = async () => {
+      setMessages([
+        { role: 'model', text: `Sawadee! Ready to practice ${language.name}?`, timestamp: new Date() }
+      ]);
       chatInstance.current = await startAIChat(language.name);
     };
     initChat();
@@ -54,14 +59,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ language }) => {
 
   return (
     <div className="flex flex-col h-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="bg-yellow-400 px-4 py-3 flex items-center gap-3">
-        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-lg shadow-inner">
-          🐒
+      <div className="bg-yellow-400 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-lg shadow-inner">
+            🐒
+          </div>
+          <div>
+            <h3 className="font-bold text-yellow-900 leading-tight text-sm">Lingo Monkey</h3>
+            <p className="text-[8px] font-black text-yellow-700 uppercase tracking-widest">Tutor • Online</p>
+          </div>
         </div>
-        <div>
-          <h3 className="font-bold text-yellow-900 leading-tight text-sm">Lingo Monkey</h3>
-          <p className="text-[8px] font-black text-yellow-700 uppercase tracking-widest">Tutor • Online</p>
-        </div>
+
+        {/* Language Quick Switcher */}
+        <button 
+          onClick={onOpenLanguageSelector}
+          className="flex items-center gap-2 bg-yellow-500/30 hover:bg-yellow-500/50 px-3 py-1.5 rounded-xl border border-yellow-600/10 transition-all active:scale-95"
+        >
+          <span className="text-sm">{language.flag}</span>
+          <span className="text-[9px] font-black text-yellow-900 uppercase tracking-widest">{language.id.split('-')[0]}</span>
+          <span className="text-[10px] text-yellow-800 opacity-50">▼</span>
+        </button>
       </div>
 
       <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-4 custom-scrollbar bg-amber-50/10">
@@ -81,10 +98,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ language }) => {
         ))}
         {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-white p-2 rounded-lg rounded-tl-none shadow-sm flex gap-1">
-              <div className="w-1 h-1 bg-gray-300 rounded-full animate-bounce"></div>
-              <div className="w-1 h-1 bg-gray-300 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-              <div className="w-1 h-1 bg-gray-300 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div className="bg-white p-2 rounded-lg rounded-tl-none shadow-sm flex gap-1 border border-gray-100">
+              <div className="w-1 h-1 bg-yellow-400 rounded-full animate-bounce"></div>
+              <div className="w-1 h-1 bg-yellow-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+              <div className="w-1 h-1 bg-yellow-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
             </div>
           </div>
         )}
@@ -97,8 +114,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ language }) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Type a message..."
-            className="flex-1 bg-transparent border-none outline-none px-2 py-1.5 text-sm text-gray-700"
+            placeholder={`Reply in ${language.name}...`}
+            className="flex-1 bg-transparent border-none outline-none px-2 py-1.5 text-sm text-gray-700 placeholder:text-gray-300"
           />
           <button 
             onClick={handleSend}

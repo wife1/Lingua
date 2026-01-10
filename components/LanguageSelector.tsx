@@ -62,95 +62,165 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-md animate-in fade-in duration-500">
-      <div className="bg-white rounded-3xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl scale-in-center mx-4 overflow-hidden border-[8px] border-yellow-400">
-        <div className="p-8 border-b border-gray-100 bg-yellow-50/20">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center gap-4">
-              <h2 className="text-3xl font-black text-gray-800 font-outfit tracking-tight">Choose Your Mission</h2>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-500 p-2 sm:p-4">
+      <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] w-full max-w-5xl h-[92vh] sm:h-[90vh] flex flex-col shadow-2xl scale-in-center overflow-hidden border-4 sm:border-[10px] border-yellow-400">
+        
+        {/* Header Section */}
+        <div className="p-4 sm:p-8 pb-4 border-b border-gray-100 bg-gradient-to-b from-yellow-50/40 to-white">
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-400 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl shadow-lg shadow-yellow-200/50">🌍</div>
+              <h2 className="text-xl sm:text-3xl font-black text-gray-800 font-outfit tracking-tight">Select Language</h2>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="bg-gray-100 w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl shadow-sm text-gray-400 hover:text-red-500 hover:bg-red-50 text-base sm:text-xl flex items-center justify-center transition-all active:scale-90"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-3 mb-4 sm:mb-6">
+            <div className="flex items-center gap-2">
+              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
+              <button 
+                onClick={handleImportClick} 
+                className="flex-1 py-3 bg-white border-2 border-gray-100 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-gray-50 hover:border-yellow-200 transition-all shadow-sm flex items-center justify-center gap-2 group"
+              >
+                <span className="text-base sm:text-lg group-hover:scale-125 transition-transform">📥</span>
+                Import Config
+              </button>
+              <button 
+                onClick={handleExport} 
+                className="flex-1 py-3 bg-gray-900 text-white rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg flex items-center justify-center gap-2 group"
+              >
+                <span className="text-base sm:text-lg group-hover:scale-125 transition-transform">📤</span>
+                Export Library
+              </button>
               <button 
                 onClick={() => setShowHelpModal(true)}
-                className="w-6 h-6 bg-white shadow-sm text-gray-400 rounded-full flex items-center justify-center text-xs font-black hover:bg-yellow-400 hover:text-yellow-900 transition-all"
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-white border-2 border-gray-100 shadow-sm text-gray-400 rounded-xl sm:rounded-2xl flex items-center justify-center text-sm sm:text-lg font-black hover:bg-yellow-400 hover:text-yellow-900 hover:border-yellow-400 transition-all active:scale-95"
               >
                 ?
               </button>
             </div>
-            <div className="flex items-center gap-2">
-              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
-              <button onClick={handleImportClick} className="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-gray-500 hover:bg-gray-50 transition-all shadow-sm">
-                📥 Import
-              </button>
-              <button onClick={handleExport} className="px-3 py-1.5 bg-yellow-400 text-yellow-900 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-yellow-500 transition-all shadow-sm">
-                📤 Export
-              </button>
-              <button onClick={onClose} className="bg-white w-10 h-10 rounded-xl shadow-lg text-gray-300 hover:text-red-500 text-xl flex items-center justify-center transition-all">✕</button>
-            </div>
           </div>
+
+          {/* Search Bar */}
           <div className="relative group">
-            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl group-focus-within:scale-110 transition-transform">🌍</span>
+            <span className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-xl sm:text-2xl group-focus-within:scale-110 transition-transform duration-300">🔍</span>
             <input 
               type="text" 
-              placeholder="Search languages..."
-              className="w-full pl-14 pr-8 py-4 bg-white border border-gray-100 rounded-2xl outline-none focus:ring-4 focus:ring-yellow-400/10 shadow-sm transition-all text-lg font-bold placeholder:text-gray-200"
+              placeholder="Search 50+ languages..."
+              className="w-full pl-12 sm:pl-16 pr-8 py-3.5 sm:py-5 bg-white border-2 border-gray-100 rounded-2xl sm:rounded-3xl outline-none focus:ring-4 sm:focus:ring-8 focus:ring-yellow-400/10 focus:border-yellow-400 shadow-sm transition-all text-base sm:text-lg font-bold placeholder:text-gray-300"
               value={langSearch}
               onChange={(e) => setLangSearch(e.target.value)}
             />
+            {langSearch && (
+              <button 
+                onClick={() => setLangSearch('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center text-xs"
+              >
+                ✕
+              </button>
+            )}
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-gray-50/10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        {/* Language Grid */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8 bg-gray-50/20">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
             {filteredLanguages.map(lang => (
               <button
                 key={lang.id}
                 onClick={() => onSelectLanguage(lang)}
-                className={`p-6 rounded-2xl flex items-center gap-5 border-2 transition-all group relative overflow-hidden ${
-                  selectedLanguage.id === lang.id ? 'border-yellow-400 bg-yellow-50 shadow-md' : 'border-white hover:border-yellow-200 hover:bg-white bg-white shadow-sm'
+                className={`p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] flex flex-col items-center gap-2 sm:gap-4 border-[2px] sm:border-[3px] transition-all group relative overflow-hidden ${
+                  selectedLanguage.id === lang.id 
+                    ? 'border-yellow-400 bg-yellow-50 shadow-xl scale-[1.02]' 
+                    : 'border-white hover:border-yellow-200 hover:bg-white bg-white shadow-md hover:shadow-xl hover:-translate-y-1'
                 }`}
               >
-                <span className="text-4xl group-hover:scale-110 transition-transform duration-500 z-10">{lang.flag}</span>
-                <div className="text-left flex-1 min-w-0 z-10">
-                  <p className="font-black text-gray-800 truncate leading-tight text-lg tracking-tight">{lang.name}</p>
-                  <p className="text-[10px] text-gray-400 font-black truncate tracking-widest uppercase mt-0.5">{lang.nativeName}</p>
+                <div className="relative">
+                  <span className="text-4xl sm:text-6xl block group-hover:scale-110 transition-transform duration-500 z-10 filter drop-shadow-md">
+                    {lang.flag}
+                  </span>
+                  {selectedLanguage.id === lang.id && (
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-8 sm:h-8 bg-green-500 rounded-full flex items-center justify-center border-2 sm:border-4 border-yellow-50 text-white z-20 shadow-sm">
+                      <span className="font-black text-[8px] sm:text-xs">✓</span>
+                    </div>
+                  )}
                 </div>
-                {selectedLanguage.id === lang.id && (
-                  <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-white z-10">
-                    <span className="font-black text-sm">✓</span>
-                  </div>
-                )}
+                
+                <div className="text-center w-full z-10">
+                  <p className="font-black text-gray-800 truncate leading-tight text-sm sm:text-lg tracking-tight">
+                    {lang.name}
+                  </p>
+                  <p className="text-[8px] sm:text-[9px] text-gray-400 font-black truncate tracking-widest uppercase mt-0.5 sm:mt-1">
+                    {lang.nativeName}
+                  </p>
+                </div>
+
+                <div className={`absolute top-0 right-0 w-16 h-16 sm:w-24 sm:h-24 -mr-4 -mt-4 sm:-mr-8 sm:-mt-8 rounded-full blur-2xl sm:blur-3xl transition-opacity ${
+                  selectedLanguage.id === lang.id ? 'bg-yellow-400/20 opacity-100' : 'bg-yellow-200/0 opacity-0 group-hover:bg-yellow-400/10 group-hover:opacity-100'
+                }`}></div>
               </button>
             ))}
+          </div>
+          
+          {filteredLanguages.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12 sm:py-20 text-center">
+              <span className="text-4xl sm:text-6xl mb-4 grayscale opacity-30">🔍</span>
+              <p className="text-gray-400 font-black uppercase tracking-widest text-[10px] sm:text-xs">No languages found</p>
+              <button 
+                onClick={() => setLangSearch('')} 
+                className="mt-3 text-yellow-600 font-bold hover:underline text-xs"
+              >
+                Clear search
+              </button>
+            </div>
+          )}
+        </div>
+        
+        {/* Footer Stats */}
+        <div className="px-4 sm:px-8 py-3 sm:py-4 bg-white border-t border-gray-50 flex items-center justify-between text-[8px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">
+          <div className="flex gap-2 sm:gap-4">
+             <span>{languages.length} Languages</span>
+             <span className="text-gray-200">|</span>
+             <span>50+ Topics</span>
+          </div>
+          <div className="hidden sm:block">
+             Learning: <span className="text-yellow-600">{selectedLanguage.name}</span>
           </div>
         </div>
       </div>
 
+      {/* Help Modal */}
       {showHelpModal && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300 px-6">
-          <div className="bg-white rounded-3xl w-full max-w-xl h-auto flex flex-col shadow-2xl scale-in-center overflow-hidden border-[6px] border-yellow-400">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-yellow-50/20">
-              <h3 className="text-2xl font-black text-gray-800 font-outfit">Language JSON Schema</h3>
-              <button onClick={() => setShowHelpModal(false)} className="text-gray-300 hover:text-red-500 text-2xl transition-all">✕</button>
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-md animate-in fade-in duration-300 px-4 sm:px-6">
+          <div className="bg-white rounded-[1.5rem] sm:rounded-[2rem] w-full max-w-xl flex flex-col shadow-2xl scale-in-center overflow-hidden border-4 sm:border-[8px] border-yellow-400">
+            <div className="p-4 sm:p-8 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-yellow-50 to-white">
+              <h3 className="text-lg sm:text-2xl font-black text-gray-800 font-outfit">Language Guide</h3>
+              <button onClick={() => setShowHelpModal(false)} className="text-gray-300 hover:text-red-500 text-xl sm:text-2xl transition-all">✕</button>
             </div>
-            <div className="p-6 space-y-4">
-              <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest">Format</h4>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-xl text-xs overflow-x-auto border-2 border-gray-800 leading-relaxed font-mono">
+            <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
+              <div>
+                <h4 className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 sm:mb-4">JSON Object Definition</h4>
+                <div className="relative group">
+                   <pre className="bg-gray-900 text-green-400 p-4 sm:p-6 rounded-[1rem] sm:rounded-[1.5rem] text-[10px] sm:text-xs overflow-x-auto border-2 border-gray-800 leading-relaxed font-mono shadow-inner">
 {`[
   {
     "id": "th",
     "name": "Thai",
     "nativeName": "ภาษาไทย",
     "flag": "🇹🇭"
-  },
-  {
-    "id": "es",
-    "name": "Spanish",
-    "nativeName": "Español",
-    "flag": "🇪🇸"
   }
 ]`}
-              </pre>
-              <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                <p className="text-xs text-blue-800 font-medium">
-                  Add custom languages by providing a unique <strong>id</strong>, the common <strong>name</strong>, the <strong>nativeName</strong>, and an emoji <strong>flag</strong>.
+                  </pre>
+                </div>
+              </div>
+              <div className="bg-blue-50 p-4 sm:p-6 rounded-[1rem] sm:rounded-[1.5rem] border border-blue-100 shadow-sm">
+                <p className="text-[10px] sm:text-xs text-blue-800 font-bold leading-relaxed">
+                  💡 Use export to get a template, edit the JSON, and re-import to add your own languages.
                 </p>
               </div>
             </div>

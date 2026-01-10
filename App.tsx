@@ -1,15 +1,15 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { AppView, Language, Lesson, Badge, DailyGoal, GrammarItem } from './types';
-import { LANGUAGES, INITIAL_LESSON_DATA, MOCK_QUIZ_GREETINGS, MOCK_GOALS, getGrammarDataForLang, getLessonsForLang } from './constants';
+import { LANGUAGES, MOCK_QUIZ_GREETINGS, MOCK_GOALS, getGrammarDataForLang, getLessonsForLang } from './constants';
 import Sidebar from './components/Sidebar';
-import LessonCard from './components/LessonCard';
-import ChatInterface from './components/ChatInterface';
 import Quiz from './components/Quiz';
 import VocabPractice from './components/VocabPractice';
 import GrammarBank from './components/GrammarBank';
 import LearnDashboard from './components/LearnDashboard';
 import LanguageSelector from './components/LanguageSelector';
+import ChatInterface from './components/ChatInterface';
+import ProfileView from './components/ProfileView';
 
 const INITIAL_BADGES: Badge[] = [
   { id: 'b1', name: 'First Word', description: 'Complete your first lesson', icon: '🌱', unlocked: false, requirement: 'lessons:1' },
@@ -35,6 +35,10 @@ const App: React.FC = () => {
   const [studiedLanguages, setStudiedLanguages] = useState<Set<string>>(new Set([LANGUAGES[0].id]));
   const [lastReward, setLastReward] = useState<{ coins: number, xp: number } | null>(null);
   const [confirmStart, setConfirmStart] = useState<Lesson | null>(null);
+  
+  // UI States
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const mainRef = useRef<HTMLDivElement>(null);
 
   // Global Lists State
   const [allLanguages, setAllLanguages] = useState<Language[]>(LANGUAGES);
@@ -69,6 +73,7 @@ const App: React.FC = () => {
         case 'coins': isUnlocked = coins >= target; break;
         case 'streak': isUnlocked = streak >= target; break;
         case 'langs': isUnlocked = studiedLanguages.size >= target; break;
+        case 'perfect': isUnlocked = lessons.some(l => l.progress === 100); break;
       }
       if (isUnlocked) {
         changed = true;
@@ -77,15 +82,53 @@ const App: React.FC = () => {
       return badge;
     });
     if (changed) setBadges(updatedBadges);
-  }, [coins, streak, completedLessonsCount, studiedLanguages, badges]);
+  }, [coins, streak, completedLessonsCount, studiedLanguages, badges, lessons]);
+
+  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    setShowScrollTop(e.currentTarget.scrollTop > 400);
+  };
+
+  const scrollToTop = () => {
+    mainRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleViewChange = (view: AppView) => {
+    // CRITICAL: Clear all overlays and active session states when navigating via sidebar
+    setActiveLesson(null);
+    setActiveVocabLesson(null);
+    setShowLessonDetail(null);
+    setShowLanguageBoard(false);
+    setConfirmStart(null);
+    
+    setView(view);
+    // Auto-scroll to top on view change
+    mainRef.current?.scrollTo({ top: 0 });
+  };
 
   const handleLessonComplete = (score: number, total: number) => {
+    const isPerfect = score === total;
     const earnedCoins = Math.round((score / total) * 50) + 10;
     const earnedXp = Math.round((score / total) * 100) + 20;
+    
     setCoins(prev => prev + earnedCoins);
     setXp(prev => prev + earnedXp);
     setCompletedLessonsCount(prev => prev + 1);
     setLastReward({ coins: earnedCoins, xp: earnedXp });
+
+    if (isPerfect && activeLesson) {
+      const badgeId = `lesson-${selectedLanguage.id}-${activeLesson.id}`;
+      if (!badges.find(b => b.id === badgeId)) {
+        const newBadge: Badge = {
+          id: badgeId,
+          name: `${activeLesson.title} Mastery`,
+          description: `Achieved 100% in the ${activeLesson.title} module for ${selectedLanguage.name}.`,
+          icon: activeLesson.icon,
+          unlocked: true,
+          requirement: 'manual'
+        };
+        setBadges(prev => [...prev, newBadge]);
+      }
+    }
 
     const updatedLessons = lessons.map(l => {
       if (l.id === activeLesson?.id) {
@@ -126,6 +169,7 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
+    // These states take priority over the view switcher
     if (activeLesson) {
       return (
         <div className="h-full max-w-2xl mx-auto py-4">
@@ -157,7 +201,6 @@ const App: React.FC = () => {
       case AppView.DASHBOARD:
         return (
           <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
-            {/* Header Stats Bar */}
             <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
               <div className="flex items-center gap-4 cursor-pointer hover:bg-gray-50 p-2 rounded-xl transition-all group" onClick={() => setShowLanguageBoard(true)}>
                 <div className="w-14 h-14 bg-yellow-400 rounded-xl flex items-center justify-center text-3xl shadow-md group-hover:scale-105 transition-transform">
@@ -165,7 +208,7 @@ const App: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="text-xl font-black text-gray-800 font-outfit">Learning {selectedLanguage.name}</h2>
-                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Change language</p>
+                  <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">{lessons.length} Modules Available</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -180,7 +223,6 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Daily Goals Row */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {dailyGoals.map(goal => (
                 <div key={goal.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
@@ -193,7 +235,7 @@ const App: React.FC = () => {
                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                           <div 
                             className={`h-full transition-all duration-700 ${goal.completed ? 'bg-green-500' : 'bg-yellow-400'}`}
-                            style={{ width: `${(goal.current / goal.target) * 100}%` }}
+                            style={{ width: `${((goal.current || 0) / goal.target) * 100}%` }}
                           />
                        </div>
                        <span className="text-[9px] font-black text-gray-400">{goal.current}/{goal.target}</span>
@@ -260,34 +302,22 @@ const App: React.FC = () => {
           <div className="h-full max-w-3xl mx-auto py-2 flex flex-col animate-in fade-in duration-300">
             <h2 className="text-2xl font-black text-gray-800 mb-6 font-outfit tracking-tight">AI Conversation</h2>
             <div className="flex-1 min-h-0">
-              <ChatInterface language={selectedLanguage} />
+              <ChatInterface 
+                language={selectedLanguage} 
+                onOpenLanguageSelector={() => setShowLanguageBoard(true)} 
+              />
             </div>
           </div>
         );
       case AppView.PROFILE:
         return (
-          <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 pb-20">
-             <div className="bg-white rounded-3xl p-10 shadow-sm border border-gray-100 text-center relative overflow-hidden">
-                <div className="w-24 h-24 bg-gradient-to-tr from-yellow-400 to-orange-400 rounded-full mx-auto mb-6 flex items-center justify-center text-5xl border-4 border-white shadow-xl relative z-10">
-                  👤
-                </div>
-                <h2 className="text-2xl font-black text-gray-800 font-outfit relative z-10 tracking-tight">Explorer</h2>
-                <p className="text-gray-400 font-bold mb-10 relative z-10 uppercase tracking-[0.2em] text-[10px]">Linguist • 2024</p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 relative z-10">
-                  {[
-                    { label: 'XP', val: xp.toLocaleString() },
-                    { label: 'Wallet', val: coins.toLocaleString() },
-                    { label: 'Courses', val: completedLessonsCount },
-                    { label: 'Langs', val: studiedLanguages.size }
-                  ].map((stat, i) => (
-                    <div key={i} className="bg-gray-50/50 p-6 rounded-2xl text-left border border-gray-100 transition-all hover:bg-white hover:shadow-lg">
-                      <p className="text-[9px] font-black text-gray-400 uppercase mb-1">{stat.label}</p>
-                      <p className="text-xl font-black text-gray-800 tracking-tight">{stat.val}</p>
-                    </div>
-                  ))}
-                </div>
-             </div>
-          </div>
+          <ProfileView 
+            xp={xp}
+            coins={coins}
+            completedLessonsCount={completedLessonsCount}
+            studiedLanguagesCount={studiedLanguages.size}
+            badges={badges}
+          />
         );
       default:
         return null;
@@ -296,25 +326,28 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden bg-[#fdfcf6]">
-      <Sidebar currentView={currentView} setView={setView} />
-      <main className="flex-1 overflow-y-auto custom-scrollbar relative pb-24 md:pb-12 pt-10 px-6 sm:px-12">
-        {!activeLesson && !activeVocabLesson && (
-          <div className="flex justify-end mb-8">
-            <button 
-              className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-full border border-gray-100 shadow-md hover:shadow-lg hover:border-yellow-200 transition-all group active:scale-95" 
-              onClick={() => setShowLanguageBoard(true)}
-            >
-              <div className="text-xl transition-transform duration-300">{selectedLanguage.flag}</div>
-              <div className="text-left">
-                <span className="block font-black text-gray-800 text-xs tracking-tight">{selectedLanguage.name}</span>
-              </div>
-            </button>
-          </div>
-        )}
-
+      <Sidebar currentView={currentView} setView={handleViewChange} />
+      <main 
+        ref={mainRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto custom-scrollbar relative pb-24 md:pb-12 pt-10 px-6 sm:px-12 scroll-smooth"
+      >
         <div className="h-full">
           {renderContent()}
         </div>
+
+        {/* Scroll To Top Button */}
+        <button
+          onClick={scrollToTop}
+          className={`fixed bottom-24 right-8 z-[60] w-12 h-12 bg-gray-900 text-yellow-400 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:bg-black hover:scale-110 active:scale-90 border-2 border-gray-800 ${
+            showScrollTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+          }`}
+          title="Scroll to Top"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
 
         {/* Start Confirmation Modal */}
         {confirmStart && (
@@ -343,7 +376,7 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* New Language Selector Component */}
+        {/* Language Selector Component */}
         {showLanguageBoard && (
            <LanguageSelector 
              selectedLanguage={selectedLanguage}

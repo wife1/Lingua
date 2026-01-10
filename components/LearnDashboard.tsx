@@ -76,7 +76,12 @@ const LearnDashboard: React.FC<LearnDashboardProps> = ({
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <h3 className="text-2xl font-black text-gray-800 font-outfit tracking-tight">Modules</h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-2xl font-black text-gray-800 font-outfit tracking-tight">Modules</h3>
+              <span className="bg-yellow-100 text-yellow-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm border border-yellow-200/50">
+                {lessons.length} Topics
+              </span>
+            </div>
             <button 
               onClick={() => setShowHelpModal(true)}
               className="w-6 h-6 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center text-xs font-black hover:bg-yellow-400 hover:text-yellow-900 transition-all"

@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { GrammarItem, Language } from '../types';
 
 interface GrammarBankProps {
@@ -10,7 +10,17 @@ interface GrammarBankProps {
 
 const GrammarBank: React.FC<GrammarBankProps> = ({ language, items, onUpdateItems }) => {
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const filteredItems = useMemo(() => {
+    if (!searchTerm.trim()) return items;
+    const lowerSearch = searchTerm.toLowerCase();
+    return items.filter(item => 
+      item.title.toLowerCase().includes(lowerSearch) || 
+      item.explanation.toLowerCase().includes(lowerSearch)
+    );
+  }, [items, searchTerm]);
 
   const handleExport = () => {
     const dataStr = JSON.stringify(items, null, 2);
@@ -52,50 +62,75 @@ const GrammarBank: React.FC<GrammarBankProps> = ({ language, items, onUpdateItem
   };
 
   return (
-    <section className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <h3 className="text-xl font-black text-gray-800 font-outfit flex items-center gap-3">
-            <span className="w-2.5 h-8 bg-blue-500 rounded-full"></span>
-            Grammar Bank
-          </h3>
-          <button 
-            onClick={() => setShowHelpModal(true)}
-            className="w-6 h-6 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center text-xs font-black hover:bg-yellow-400 hover:text-yellow-900 transition-all"
-            title="JSON Data Format Help"
-          >
-            ?
-          </button>
+    <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col">
+              <h3 className="text-2xl font-black text-gray-800 font-outfit tracking-tight flex items-center gap-3">
+                <span className="w-2.5 h-8 bg-blue-500 rounded-full"></span>
+                Grammar Bank
+              </h3>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="bg-blue-50 text-blue-600 text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em] shadow-sm border border-blue-100">
+                  {items.length} CURRICULUM TOPICS
+                </span>
+                <button 
+                  onClick={() => setShowHelpModal(true)}
+                  className="w-5 h-5 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center text-[10px] font-black hover:bg-yellow-400 hover:text-yellow-900 transition-all shadow-sm"
+                  title="JSON Data Format Help"
+                >
+                  ?
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              accept=".json" 
+              className="hidden" 
+            />
+            <button 
+              onClick={handleImportClick}
+              className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-gray-50 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm"
+            >
+              📥 Import
+            </button>
+            <button 
+              onClick={handleExport}
+              className="px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md shadow-blue-100"
+            >
+              📤 Export Library
+            </button>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-2">
+
+        <div className="relative group w-full md:w-96">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300">🔍</span>
           <input 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleFileChange} 
-            accept=".json" 
-            className="hidden" 
+            type="text" 
+            placeholder="Search 500+ grammar rules..."
+            className="pl-9 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold outline-none focus:ring-4 focus:ring-blue-400/10 focus:border-blue-200 transition-all w-full shadow-sm placeholder:text-gray-300"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button 
-            onClick={handleImportClick}
-            className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-gray-50 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm"
-          >
-            📥 Import JSON
-          </button>
-          <button 
-            onClick={handleExport}
-            className="px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md shadow-blue-100"
-          >
-            📤 Export JSON
-          </button>
-          <span className="hidden sm:inline-block text-[10px] font-black text-gray-400 uppercase bg-gray-100 px-3 py-1 rounded-full">
-            {items.length} Topics
-          </span>
+          {searchTerm && (
+            <button 
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500"
+            >
+              ✕
+            </button>
+          )}
         </div>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <div 
             key={item.id} 
             className="bg-white p-6 rounded-2xl border border-blue-100 shadow-sm hover:border-blue-300 hover:shadow-md transition-all group"
@@ -126,11 +161,13 @@ const GrammarBank: React.FC<GrammarBankProps> = ({ language, items, onUpdateItem
             </div>
           </div>
         ))}
-        {items.length === 0 && (
+        {filteredItems.length === 0 && (
           <div className="col-span-full py-20 bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-center">
             <span className="text-4xl mb-4">📭</span>
-            <p className="text-gray-400 font-black uppercase tracking-widest text-xs">No grammar data available</p>
-            <button onClick={handleImportClick} className="mt-4 text-blue-500 font-bold text-sm hover:underline">Import some now?</button>
+            <p className="text-gray-400 font-black uppercase tracking-widest text-xs">No matching grammar rules</p>
+            {searchTerm && (
+              <button onClick={() => setSearchTerm('')} className="mt-4 text-blue-500 font-bold text-sm hover:underline">Clear search?</button>
+            )}
           </div>
         )}
       </div>

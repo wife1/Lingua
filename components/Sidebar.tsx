@@ -16,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-2 flex justify-around md:relative md:w-24 md:flex-col md:border-t-0 md:border-r md:h-screen md:justify-center md:gap-8 z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-2 flex justify-around md:relative md:w-24 md:flex-col md:border-t-0 md:border-r md:h-screen md:justify-center md:gap-8 z-[1000]">
       <div className="hidden md:block absolute top-8 left-1/2 -translate-x-1/2">
         <div className="w-12 h-12 bg-yellow-400 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-yellow-200 cursor-pointer" onClick={() => setView(AppView.DASHBOARD)}>
           🐒
