@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
-import { Lesson } from '../types';
+import { Lesson, Language } from '../types';
 
 interface LessonCardProps {
   lesson: Lesson;
+  language?: Language;
   onClick: () => void;
   onShowGrammar: (e: React.MouseEvent) => void;
   onPracticeVocab: (e: React.MouseEvent) => void;
@@ -11,10 +12,11 @@ interface LessonCardProps {
   languageName?: string;
 }
 
-const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar, onPracticeVocab, onRate, languageName }) => {
+const LessonCard: React.FC<LessonCardProps> = ({ lesson, language, onClick, onShowGrammar, onPracticeVocab, onRate, languageName }) => {
   const [showSummary, setShowSummary] = useState(false);
   const [showGrammarDetail, setShowGrammarDetail] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [grammarQuizFeedback, setGrammarQuizFeedback] = useState<'idle' | 'correct' | 'wrong'>('idle');
 
   const difficultyColors = {
     Beginner: 'bg-emerald-100 text-emerald-700',
@@ -24,14 +26,23 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar,
 
   const isComplete = lesson.progress === 100;
 
-  const handlePronounce = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handlePronounce = (text: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if ('speechSynthesis' in window) {
       setIsSpeaking(true);
-      const utterance = new SpeechSynthesisUtterance(lesson.title);
+      const utterance = new SpeechSynthesisUtterance(text);
+      if (language) {
+        // Simple mapping for demo, usually would use a proper map from lang ID to BCP 47
+        utterance.lang = language.id; 
+      }
       utterance.onend = () => setIsSpeaking(false);
       window.speechSynthesis.speak(utterance);
     }
+  };
+
+  const checkGrammarQuiz = (ans: boolean) => {
+      setGrammarQuizFeedback(ans ? 'correct' : 'wrong');
+      setTimeout(() => setGrammarQuizFeedback('idle'), 2000);
   };
 
   return (
@@ -48,7 +59,7 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar,
         </div>
       )}
 
-      <div className="flex flex-col items-start text-left p-6 w-full">
+      <div className="flex flex-col items-start text-left p-6 w-full h-full">
         <div className="flex justify-between w-full mb-6 items-start">
           <div className="relative">
             {/* Prominent Progress Ring */}
@@ -96,7 +107,7 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar,
             {/* Action Buttons: Clearly Visible */}
             <div className="flex gap-2">
               <button 
-                onClick={handlePronounce}
+                onClick={(e) => handlePronounce(lesson.title, e)}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all border-2 shadow-sm ${isSpeaking ? 'bg-yellow-400 border-yellow-400 text-yellow-900 animate-pulse' : 'bg-gray-50 border-gray-100 text-gray-400 hover:text-yellow-600 hover:border-yellow-200'}`}
                 title="Hear Pronunciation"
               >
@@ -135,16 +146,28 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar,
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lesson.vocabulary?.length || 0} Terms</p>
         </div>
         
-        <div className="w-full flex items-center gap-4 mt-auto">
-          <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden relative shadow-inner">
-            <div 
-              className={`h-full ${lesson.needsReview ? 'bg-red-400' : 'bg-yellow-400'} rounded-full transition-all duration-1000 cubic-bezier(0.34, 1.56, 0.64, 1) ${lesson.progress > 0 ? 'shimmer-bar progress-glow' : ''}`}
-              style={{ width: `${lesson.progress}%` }}
-            />
+        <div className="w-full mt-auto">
+          {lesson.lastScore !== undefined && !isComplete && (
+            <div className="flex justify-between items-center mb-2 animate-in fade-in slide-in-from-bottom-1">
+               <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Progress</span>
+               <div className="flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-100 shadow-sm">
+                 <span className="text-[10px] text-orange-500">🎯</span>
+                 <span className="text-[9px] font-black text-orange-600 uppercase tracking-widest">Last: {lesson.lastScore} pts</span>
+               </div>
+            </div>
+          )}
+          
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden relative shadow-inner">
+              <div 
+                className={`h-full ${lesson.needsReview ? 'bg-red-400' : 'bg-yellow-400'} rounded-full transition-all duration-1000 cubic-bezier(0.34, 1.56, 0.64, 1) ${lesson.progress > 0 ? 'shimmer-bar progress-glow' : ''}`}
+                style={{ width: `${lesson.progress}%` }}
+              />
+            </div>
+            <span className={`text-[12px] font-black ${lesson.needsReview ? 'text-red-500' : 'text-gray-600'} w-10 text-right`}>
+              {lesson.progress}%
+            </span>
           </div>
-          <span className={`text-[12px] font-black ${lesson.needsReview ? 'text-red-500' : 'text-gray-600'} w-10 text-right`}>
-            {lesson.progress}%
-          </span>
         </div>
       </div>
 
@@ -182,21 +205,17 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar,
           {showSummary && (
             <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
               <div className="space-y-2">
-                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Key Vocabulary</p>
+                <div className="flex items-center justify-between">
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Pronunciation Guide</p>
+                </div>
                 <div className="flex flex-wrap gap-1.5">
                   {lesson.vocabulary?.map((v, i) => (
                     <button 
                       key={i} 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if ('speechSynthesis' in window) {
-                          const u = new SpeechSynthesisUtterance(v);
-                          window.speechSynthesis.speak(u);
-                        }
-                      }}
-                      className="px-3 py-1.5 bg-white text-gray-700 text-[11px] font-bold rounded-xl border border-gray-100 hover:border-yellow-300 hover:bg-yellow-50 transition-all active:scale-95 flex items-center gap-2 shadow-sm"
+                      onClick={(e) => handlePronounce(v, e)}
+                      className="px-3 py-1.5 bg-white text-gray-700 text-[11px] font-bold rounded-xl border border-gray-100 hover:border-yellow-300 hover:bg-yellow-50 transition-all active:scale-95 flex items-center gap-2 shadow-sm group/vocab"
                     >
-                      {v} <span className="text-[10px] opacity-30">🔊</span>
+                      {v} <span className="text-[10px] opacity-30 group-hover/vocab:opacity-100 transition-opacity">🔊</span>
                     </button>
                   ))}
                 </div>
@@ -223,16 +242,31 @@ const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, onShowGrammar,
                         <p className={`text-xs ${lesson.needsReview ? 'text-red-900' : 'text-gray-700'} leading-relaxed font-medium italic mb-4`}>
                           {lesson.grammarNotes}
                         </p>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onShowGrammar(e);
-                          }}
-                          className="flex items-center gap-1.5 text-[10px] font-black text-blue-600 hover:text-blue-800 uppercase tracking-widest transition-all group/learn"
-                        >
-                          View Full Breakdown 
-                          <span className="group-hover/learn:translate-x-1 transition-transform">→</span>
-                        </button>
+                        
+                        {/* Interactive Grammar Example */}
+                        <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3 mt-2">
+                           <div className="flex items-center justify-between mb-2">
+                              <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Interactive Check</span>
+                              {grammarQuizFeedback === 'correct' && <span className="text-green-500 text-xs font-bold animate-bounce">Correct!</span>}
+                              {grammarQuizFeedback === 'wrong' && <span className="text-red-500 text-xs font-bold animate-shake">Try again!</span>}
+                           </div>
+                           <p className="text-xs font-bold text-gray-700 mb-2">Do you understand this rule?</p>
+                           <div className="flex gap-2">
+                              <button 
+                                onClick={() => checkGrammarQuiz(true)} 
+                                className="flex-1 bg-white border border-blue-200 text-blue-600 rounded-lg py-1.5 text-[10px] font-black uppercase hover:bg-blue-500 hover:text-white transition-all"
+                              >
+                                Yes
+                              </button>
+                              <button 
+                                onClick={() => checkGrammarQuiz(false)} 
+                                className="flex-1 bg-white border border-red-200 text-red-600 rounded-lg py-1.5 text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition-all"
+                              >
+                                No
+                              </button>
+                           </div>
+                        </div>
+
                      </div>
                    )}
                 </div>

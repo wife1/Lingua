@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { AppView, Language, Lesson, Badge, DailyGoal, GrammarItem } from './types';
-import { LANGUAGES, MOCK_QUIZ_GREETINGS, MOCK_GOALS, getGrammarDataForLang, getLessonsForLang } from './constants';
+import { LANGUAGES, MOCK_GOALS, getGrammarDataForLang, getLessonsForLang } from './constants';
 import Sidebar from './components/Sidebar';
 import Quiz from './components/Quiz';
 import VocabPractice from './components/VocabPractice';
@@ -175,9 +175,10 @@ const App: React.FC = () => {
         <div className="h-full max-w-2xl mx-auto py-4">
           <Quiz 
             lesson={activeLesson}
+            language={selectedLanguage}
             languageName={selectedLanguage.name}
-            questions={MOCK_QUIZ_GREETINGS} 
-            onComplete={(score) => handleLessonComplete(score, MOCK_QUIZ_GREETINGS.length)}
+            questions={activeLesson.quiz || []} 
+            onComplete={(score) => handleLessonComplete(score, activeLesson.quiz?.length || 0)}
             onClose={() => { setActiveLesson(null); setLastReward(null); }} 
             reward={lastReward}
           />

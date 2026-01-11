@@ -160,6 +160,7 @@ const LearnDashboard: React.FC<LearnDashboardProps> = ({
           <LessonCard 
             key={lesson.id} 
             lesson={lesson} 
+            language={language}
             onClick={() => onSelectLesson(lesson)} 
             onShowGrammar={() => onSelectLesson(lesson)}
             onPracticeVocab={() => onPracticeVocab(lesson)}

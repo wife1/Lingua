@@ -15,6 +15,28 @@ export type Language = {
   nativeName: string;
 };
 
+export type QuestionType = 
+  | 'MATCH' 
+  | 'MULTIPLE_CHOICE' 
+  | 'TRANSLATE' 
+  | 'ARRANGE' 
+  | 'LISTENING' 
+  | 'SPEAKING' 
+  | 'FILL_IN_BLANK' 
+  | 'TRUE_FALSE' 
+  | 'EMOJI_MATCH';
+
+export type Question = {
+  id: string;
+  type: QuestionType;
+  prompt: string;
+  correctAnswer: string | string[];
+  options?: string[];
+  pairs?: { key: string; value: string }[];
+  audioText?: string;
+  emoji?: string;
+};
+
 export type Lesson = {
   id: string;
   title: string;
@@ -25,6 +47,7 @@ export type Lesson = {
   color: string;
   grammarNotes?: string;
   vocabulary?: string[];
+  quiz?: Question[];
   needsReview?: boolean;
   lastScore?: number;
   rating?: number;
@@ -38,17 +61,6 @@ export type GrammarItem = {
   examples: string[];
   color: string;
   level: string;
-};
-
-export type QuestionType = 'MATCH' | 'MULTIPLE_CHOICE' | 'TRANSLATE' | 'ARRANGE';
-
-export type Question = {
-  id: string;
-  type: QuestionType;
-  prompt: string;
-  correctAnswer: string | string[];
-  options?: string[];
-  pairs?: { key: string; value: string }[];
 };
 
 export type ChatMessage = {
